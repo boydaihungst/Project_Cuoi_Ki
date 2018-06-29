@@ -4,9 +4,17 @@
         <servlet-name>demo</servlet-name>
         <servlet-class>controller.demo</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Filter</servlet-name>
+        <servlet-class>controller.Filter</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>demo</servlet-name>
         <url-pattern>/demo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Filter</servlet-name>
+        <url-pattern>/tim-kiem</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

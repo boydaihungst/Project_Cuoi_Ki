@@ -5,13 +5,14 @@
  */
 package model;
 
+import java.io.Serializable;
 import java.sql.Date;
 
 /**
  *
  * @author DrAgOn
  */
-public class Anime{
+public class Anime implements Serializable{
     private int aniId;
     private int catId;
     private String aniName;

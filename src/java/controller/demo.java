@@ -5,15 +5,21 @@
  */
 package controller;
 
+import Utils.TimeUtils;
 import dal.AnimeDAO;
+import dal.CategoriesDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Anime;
+import model.Categories;
 
 /**
  *
@@ -33,12 +39,24 @@ public class demo extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         AnimeDAO aniDAO = new AnimeDAO();
-        ArrayList<Anime> left_side_animes = aniDAO.get_top_n_ani_season(24);
+        CategoriesDAO catDAO = new CategoriesDAO();
+        TimeUtils timeUtils = new TimeUtils();
+
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+        ArrayList<Anime> left_side_animes = aniDAO.get_top_n_ani_season(24, currentDate, timeUtils.getStartTimeOfMonth(TimeUtils.CURRENT_SEASON), TimeUtils.BY_SEASON);
         ArrayList<Anime> down_left_side_animes = aniDAO.get_top_n_most_ep(4);
-         ArrayList<Anime> right_side_animes = aniDAO.get_top_n_most_view_of_day(10);
+        ArrayList<Anime> right_side_animes = aniDAO.get_top_n_most_view_of_day(10);
+        ArrayList<Anime> left_side_animes_1 = aniDAO.get_top_n_ani_season(24, timeUtils.getStartTimeOfMonth(TimeUtils.PRE_SEASON), timeUtils.getStartTimeOfMonth(TimeUtils.CURRENT_SEASON), TimeUtils.BY_SEASON);
+        ArrayList<Anime> left_side_animes_2 = aniDAO.get_top_n_ani_new_update(24);
+        ArrayList<Categories> cats = catDAO.getAll();
+        
+        
         request.setAttribute("left_side_animes", left_side_animes);
         request.setAttribute("down_left_side_animes", down_left_side_animes);
         request.setAttribute("right_side_animes", right_side_animes);
+        request.setAttribute("left_side_animes_1", left_side_animes_1);
+        request.setAttribute("left_side_animes_2", left_side_animes_2);
+        request.setAttribute("cats", cats);
         request.getRequestDispatcher("view/homepage.jsp").forward(request, response);
     }
 

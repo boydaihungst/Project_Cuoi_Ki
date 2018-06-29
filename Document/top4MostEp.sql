@@ -67,3 +67,94 @@ SELECT TOP 24 [AniID]
 	  ,[Picture]
   FROM [Anime] a inner join [WatchStatisticByDay] w ON a.AniID=w.AniID AND convert(date, w.Date) = convert(date, GETDATE())
   Order by w.TimeClicked desc
+  /*top 24 anime moi update*/
+  SELECT TOP 24 [AniID]
+      ,[AniName]
+      ,[AniSeason]
+      ,[ReleaseTime]
+      ,[AniStatus]
+      ,[EpsMax]
+      ,[UpdateTime]
+      ,[EpsReleased]
+	  ,[Desc]
+	  ,[Picture]
+  FROM [Anime] 
+  Order by UpdateTime desc
+ /*update khi click vao link 1 ANIME ID*/
+UPDATE [WatchStatisticByDay]
+   SET [TimeClicked] = (Select TimeClicked from WatchStatisticByDay WHERE AniID=? AND convert(date,[Date]) = convert(date, GETDATE())) +1
+ WHERE AniID =?
+
+
+ --================================================
+ /*Trigger khi add || update them ep + add them EP/source EP  + update table Anime -> thi dong thoi cap nhat lai UpdateTime trong table Anime*/
+
+CREATE TRIGGER Auto_Update_UpdateTime_Anime_on_insert ON AnimeEpisodes AFTER INSERT
+AS 
+  BEGIN
+	UPDATE Anime
+	   SET [UpdateTime] = GETDATE()
+	   FROM inserted i, Anime a
+	 WHERE  a.AniID = i.AniID
+	END
+	
+CREATE TRIGGER Auto_Update_UpdateTime_Anime_on_update ON AnimeEpisodes AFTER update
+AS 
+  BEGIN
+	UPDATE Anime
+	   SET [UpdateTime] = GETDATE()
+	   FROM inserted i, Anime a
+	 WHERE  a.AniID = i.AniID
+	END
+
+	CREATE TRIGGER Auto_Update_UpdateTime_Anime_on_table_insert ON Anime AFTER INSERT
+AS 
+  BEGIN
+	UPDATE Anime
+	   SET [UpdateTime] = GETDATE()
+	   FROM inserted i, Anime a
+	 WHERE  a.AniID = i.AniID
+	END
+		CREATE TRIGGER Auto_Update_UpdateTime_Anime_on_table_update ON Anime AFTER update
+AS 
+  BEGIN
+	UPDATE Anime
+	   SET [UpdateTime] = GETDATE()
+	   FROM inserted i, Anime a
+	 WHERE  a.AniID = i.AniID
+	END
+/*trigger neu EpsReleased == EpsMax thi cap nhat lai status*/
+--Int thi van phai '1' 
+CREATE TRIGGER Auto_Update_Status_Anime_on_update ON Anime AFTER update
+AS 
+	if(Select a.AniID from Anime a inner join inserted i on a.AniID=i.AniID AND a.EpsMax=a.EpsReleased AND a.AniStatus != 1) >=1 
+	  BEGIN
+	UPDATE Anime
+	   SET [AniStatus]= 1
+	   FROM inserted i, Anime a
+	 WHERE  a.AniID = i.AniID
+	END
+--DROP trigger Auto_Update_Status_Anime_on_insert
+CREATE TRIGGER Auto_Update_Status_Anime_on_insert ON Anime AFTER insert
+AS 
+	if(Select a.AniID from Anime a inner join inserted i on a.AniID=i.AniID AND a.EpsMax=a.EpsReleased AND a.AniStatus != 1) >=1 
+  BEGIN
+	UPDATE Anime
+	   SET [AniStatus]= 1
+	   FROM inserted i, Anime a
+	 WHERE  a.AniID = i.AniID
+	END
+--==============================================
+--DROP trigger create_all_base_thing_when_Anime_cield_inserted
+CREATE TRIGGER create_all_base_thing_when_Anime_cield_inserted ON Anime AFTER insert
+AS 
+  BEGIN
+	INSERT INTO [WatchStatisticByDay]
+           ([AniID]
+           ,[Date]
+           ,[TimeClicked])
+     VALUES((select AniID from Inserted)
+           ,GETDATE()
+           ,0)
+	END
+--trigger xu li ngay  history va favorite
