@@ -281,6 +281,31 @@ public class AnimeDAO extends BaseDAO<Anime> {
         return animes;
     }
 
+    public int clickAutoincrement(int aniId) {
+        try {
+            String sql = " IF (Select count(*) from WatchStatisticByDay WHERE AniID=? AND convert(date,[Date]) = convert(date, GETDATE())) =0\n"
+                    + " INSERT INTO [WatchStatisticByDay]\n"
+                    + "           ([AniID]\n"
+                    + "           ,[Date]\n"
+                    + "           ,[TimeClicked])\n"
+                    + "     VALUES\n"
+                    + "           (?,GETDATE(),1)\n"
+                    + "ELSE\n"
+                    + "UPDATE [WatchStatisticByDay]\n"
+                    + "   SET [TimeClicked] = (Select TimeClicked from WatchStatisticByDay WHERE AniID=? AND convert(date,[Date]) = convert(date, GETDATE())) +1\n"
+                    + " WHERE AniID =?";
+            PreparedStatement statement = connection.prepareCall(sql);
+            statement.setInt(1, aniId);
+            statement.setInt(2, aniId);
+            statement.setInt(3, aniId);
+            statement.setInt(4, aniId);
+            return statement.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(AnimeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
+    }
+
     @Override
     public int update(Anime model) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

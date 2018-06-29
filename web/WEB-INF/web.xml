@@ -1,20 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <filter>
+        <filter-name>LinkFilter</filter-name>
+        <filter-class>controller.LinkFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LinkFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <servlet>
         <servlet-name>demo</servlet-name>
         <servlet-class>controller.demo</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Filter</servlet-name>
-        <servlet-class>controller.Filter</servlet-class>
+        <servlet-name>Search</servlet-name>
+        <servlet-class>controller.Search</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewAnime</servlet-name>
+        <servlet-class>controller.anime.ViewAnime</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>demo</servlet-name>
         <url-pattern>/demo</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Filter</servlet-name>
+        <servlet-name>Search</servlet-name>
         <url-pattern>/tim-kiem</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewAnime</servlet-name>
+        <url-pattern>/anime/view</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

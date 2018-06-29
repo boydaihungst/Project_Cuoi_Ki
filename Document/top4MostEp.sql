@@ -81,11 +81,19 @@ SELECT TOP 24 [AniID]
   FROM [Anime] 
   Order by UpdateTime desc
  /*update khi click vao link 1 ANIME ID*/
+ BEGIN
+ IF (Select count(*) from WatchStatisticByDay WHERE AniID=? AND convert(date,[Date]) = convert(date, GETDATE())) =0
+ INSERT INTO [WatchStatisticByDay]
+           ([AniID]
+           ,[Date]
+           ,[TimeClicked])
+     VALUES
+           (?,GETDATE(),1)
+ELSE
 UPDATE [WatchStatisticByDay]
    SET [TimeClicked] = (Select TimeClicked from WatchStatisticByDay WHERE AniID=? AND convert(date,[Date]) = convert(date, GETDATE())) +1
  WHERE AniID =?
-
-
+ END
  --================================================
  /*Trigger khi add || update them ep + add them EP/source EP  + update table Anime -> thi dong thoi cap nhat lai UpdateTime trong table Anime*/
 

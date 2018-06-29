@@ -23,7 +23,7 @@
             leftAnimes_items.add(leftAnimes_1);
             leftAnimes_items.add(leftAnimes_2);
 
-            String[] leftAnimes_titles = {"ANIME MÙA XUÂN 2018", "ANIME MÙA ĐÔNG 2018", "ANIME MỚI CẬP NHẬT"};
+            String[] leftAnimes_titles = {"ANIME MÙA XUÂN 2018", "ANIME MÙA ĐÔNG 2017", "ANIME MỚI CẬP NHẬT"};
         %>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -37,6 +37,7 @@
         <!-- Latest compiled JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="shortcut icon" href="img/favicon.ico">
         <style>
             body{
                 color: white;
@@ -54,9 +55,11 @@
                 text-align: center;
             }
             .container-body{
+                margin: auto;
+                width: 100%;
                 background-color: #171717 !important;
-                padding-left:50px;
             }
+
             .tab-title{
                 font-size: 16px;
             }
@@ -88,7 +91,7 @@
                 padding:0;
                 font-size:15px;
                 background: black;
-                opacity: 0.8;
+                opacity: 0.9;
                 position: absolute;
                 bottom: 0;
                 left: 0;
@@ -143,7 +146,8 @@
                 top:-99999px;
                 opacity: 0;
                 margin: 0;
-                padding: 0;
+                padding: 10px;
+                box-shadow: 0 0 10px 2px #43a6df;
                 position: absolute;
                 width: 250px;
                 height: 200px;
@@ -157,6 +161,20 @@
             }
             .item-info-box-right{
                 left:-255px !important;
+            }
+            .item-info-title{
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 14px;
+                color:#43a6df;
+                border-bottom: 1px solid #43a6df;
+
+            }
+            .item-info-content{
+                margin-top: 10px;
+                font-size: 12px;
+                color: #c5c5c5;
             }
             .left-side .preview-item:hover .item img{
                 box-shadow: 0 0 10px 2px white;
@@ -195,14 +213,13 @@
             }
             .content-anime-right p{
                 color: white;
-                white-space: nowrap;
-                overflow: hidden;
+                white-space: normal;
+                overflow: visible;
                 text-overflow: ellipsis;
                 margin:0;
             }
             .right-container:hover .content-anime-right p{
                 white-space: normal;
-                overflow: visible;
                 margin:0;
             }
             .view-more{
@@ -210,8 +227,14 @@
                 padding-top: 15px;
                 float:right;
             }
+            .title-container{
+                color: #43a6df;
+                border-bottom: 1.5px solid #43a6df!important;
+            }
             .title-tab-left{
                 font-size: 24px;
+                padding:0;
+                margin:0;
             }
             .nav-tabs{
                 margin-bottom: 15px;
@@ -236,11 +259,18 @@
                 margin-bottom: 10px;
                 border-bottom: 2.5px solid #43a6df!important;
             }
+            .left-title-anime{
+                padding-bottom: 0;
+                padding-top: 13px;
+            }
+            .col-center{
+                margin:0 auto;
+            }
         </style>
     </head>
     <body>
         <div class="container-body">
-            <div class="container">
+            <div class="container-fluid">
                 <jsp:include page="/templates/header.jsp"></jsp:include>
                 </div>
                 <div class="container">
@@ -254,7 +284,9 @@
                             <div class="tab-content">
                             <% for (int m = 0; m < leftAnimes_items.size(); m++) {%>
                             <div id="menu<%=m%>" class="tab-pane fade in <%= m == 0 ? "active" : ""%>">
-                                <span class="title-tab-left"><%=leftAnimes_titles[m]%></span> <% if (leftAnimes_items.get(m).size() > 24)%><a href="#" class="view-more">Xem Thêm >></a>
+                                <div class="row title-container ">
+                                    <span class="title-tab-left col-sm-10"><%=leftAnimes_titles[m]%></span> <% if (leftAnimes_items.get(m).size() > 24)%><a href="#" class="view-more col-sm-2">Xem Thêm >></a>
+                                </div>
                                 <% for (int i = 0; i < leftAnimes_items.get(m).size(); i++) {%>
                                 <div class="row">
                                     <%for (int j = 0; j < 4; j++) {
@@ -264,14 +296,14 @@
                                     %>
                                     <!--item-->
                                     <div class="col-sm-3 preview-item">
-                                        <a href="#">
+                                        <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= leftAnimes_items.get(m).get(i).getAniId()%>">
                                             <div class="item-info <%= j >= 2 ? "item-info-box-right" : "item-info-box-left"%>">
-                                                <p>
+                                                <div class="item-info-title">
                                                     <%= leftAnimes_items.get(m).get(i).getAniName()%>
-                                                </p>
-                                                <p>
+                                                </div>
+                                                <div class="item-info-content">
                                                     <%= leftAnimes_items.get(m).get(i).getDesc()%>
-                                                </p>
+                                                </div>
                                             </div>
                                             <div class="item-border item">
                                                 <div class="top-caption text-center ">
@@ -294,19 +326,20 @@
                             <%}
                             %>
                         </div>
-                        <h3>ANIME DAI TAP</h3>
+                        <h3 class="title-container">ANIME DAI TAP</h3>
                         <div class="row">
                             <%for (int j = 0; j < 4; j++) {
                             %>
                             <div  class="col-sm-3 preview-item">
                                 <a href="#">
                                     <div class="item-info <%= j >= 2 ? "item-info-box-right" : "item-info-box-left"%>">
-                                        <p>
+
+                                        <div class="item-info-title">
                                             <%= downLeftAnimes.get(j).getAniName()%>
-                                        </p>
-                                        <p>
+                                        </div>
+                                        <div class="item-info-content">
                                             <%= downLeftAnimes.get(j).getDesc()%>
-                                        </p>
+                                        </div>
                                     </div>
                                     <div class="item-border item">
                                         <div class="top-caption text-center ">
@@ -329,6 +362,9 @@
                         <div class="row">
                             <div class="col-sm-12 fb-page fb_iframe_widget" data-href="https://www.facebook.com/Ani4u2/" data-width="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="adapt_container_width=true&amp;app_id=448777685319550&amp;container_width=0&amp;hide_cover=false&amp;href=https%3A%2F%2Fwww.facebook.com%2FAni4u2%2F&amp;locale=vi_VN&amp;sdk=joey&amp;show_facepile=true&amp;small_header=false&amp;width=300"><span style="vertical-align: bottom; width: 300px; height: 196px;"><iframe name="f1602c80990609c" width="300px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" title="fb:page Facebook Social Plugin" src="https://www.facebook.com/v2.10/plugins/page.php?adapt_container_width=true&amp;app_id=448777685319550&amp;channel=http%3A%2F%2Fstaticxx.facebook.com%2Fconnect%2Fxd_arbiter%2Fr%2FxaOI6zd9HW9.js%3Fversion%3D42%23cb%3Df3193b8ef4b7ed%26domain%3Dani4u.org%26origin%3Dhttp%253A%252F%252Fani4u.org%252Ff1dff02becd9b64%26relation%3Dparent.parent&amp;container_width=0&amp;hide_cover=false&amp;href=https%3A%2F%2Fwww.facebook.com%2FAni4u2%2F&amp;locale=vi_VN&amp;sdk=joey&amp;show_facepile=true&amp;small_header=false&amp;width=300" style="border: none; visibility: visible; width: 300px; height: 196px;" class=""></iframe></span></div>
                         </div>
+                        <div class="row">
+                            <div class="col-sm-12 title-fanpage-right">Anime được xem nhiều trong ngày</div>
+                        </div>
                         <%for (int j = 0; j < rightAnimes.size(); j++) {%>
                         <div class="row right-container">
                             <div class="col-sm-4">
@@ -345,7 +381,7 @@
                             </div>
                             <div class="col-sm-8">  
                                 <div class="row">
-                                    <div class="col-sm-12 preview-item">
+                                    <div class="col-sm-12 preview-item left-title-anime">
                                         <div class="title-anime-right">
                                             <a href="#">
                                                 <p><%= rightAnimes.get(j).getAniName()%></p>
@@ -354,7 +390,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-12 preview-item">
+                                    <div class="col-sm-12 ">
                                         <div class="content-anime-right ">
                                             <a href="#">
                                                 <p><%= rightAnimes.get(j).getDesc().length() >= 100 ? rightAnimes.get(j).getDesc().substring(0, 100) + "..." : rightAnimes.get(j).getDesc()%></p>
@@ -367,9 +403,7 @@
                         <%}%>
                     </div>
                 </div>
-                <div id="search-box"></div>
             </div>
         </div>
-       
     </body>
 </html>
