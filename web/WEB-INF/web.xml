@@ -20,6 +20,10 @@
         <servlet-name>ViewAnime</servlet-name>
         <servlet-class>controller.anime.ViewAnime</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>auth</servlet-name>
+        <servlet-class>controller.account.auth</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>demo</servlet-name>
         <url-pattern>/demo</url-pattern>
@@ -31,6 +35,10 @@
     <servlet-mapping>
         <servlet-name>ViewAnime</servlet-name>
         <url-pattern>/anime/view</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>auth</servlet-name>
+        <url-pattern>/tai-khoan/auth</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

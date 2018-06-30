@@ -77,7 +77,8 @@
             }
             .item-border{
                 position: relative;
-                width: 155px;
+                width: 155px !important;
+                height: 217px !important;
             }
 
             .item-border-right{
@@ -172,9 +173,12 @@
 
             }
             .item-info-content{
-                margin-top: 10px;
+                height: 155px;
+                padding-top: 10px;
                 font-size: 12px;
                 color: #c5c5c5;
+                text-overflow: ellipsis;
+                overflow: hidden;
             }
             .left-side .preview-item:hover .item img{
                 box-shadow: 0 0 10px 2px white;
@@ -183,7 +187,7 @@
                 border:1px solid slategrey;
             }
             .left-side .preview-item:hover .item-info{
-                top:2%;
+                top:4%;
                 opacity: 1;
             }
             .left-side .preview-item .item-info:hover{
@@ -228,6 +232,8 @@
                 float:right;
             }
             .title-container{
+                margin-top:20px;
+                margin-bottom: 15px;
                 color: #43a6df;
                 border-bottom: 1.5px solid #43a6df!important;
             }
@@ -285,9 +291,9 @@
                             <% for (int m = 0; m < leftAnimes_items.size(); m++) {%>
                             <div id="menu<%=m%>" class="tab-pane fade in <%= m == 0 ? "active" : ""%>">
                                 <div class="row title-container ">
-                                    <span class="title-tab-left col-sm-10"><%=leftAnimes_titles[m]%></span> <% if (leftAnimes_items.get(m).size() > 24)%><a href="#" class="view-more col-sm-2">Xem Thêm >></a>
+                                    <span class="title-tab-left col-sm-10"><%=leftAnimes_titles[m]%></span> <%if (leftAnimes_items.get(m).size() > 24) {%><a href="#" class="view-more col-sm-2">Xem Thêm >></a><%}%>
                                 </div>
-                                <% for (int i = 0; i < leftAnimes_items.get(m).size(); i++) {%>
+                                <% for (int i = 0; i < 24; i++) {%>
                                 <div class="row">
                                     <%for (int j = 0; j < 4; j++) {
                                             if (i >= leftAnimes_items.get(m).size()) {
@@ -326,7 +332,10 @@
                             <%}
                             %>
                         </div>
-                        <h3 class="title-container">ANIME DAI TAP</h3>
+                        <div class="row title-container ">
+                            <span class="title-tab-left col-sm-10">ANIME DÀI TẬP</span><a href="#" class="view-more col-sm-2">Xem Thêm >></a>
+                        </div>
+                        <!--<span class="title-container">ANIME DAI TAP</span> <a href="#" class="view-more col-sm-2">Xem Thêm >></a>-->
                         <div class="row">
                             <%for (int j = 0; j < 4; j++) {
                             %>

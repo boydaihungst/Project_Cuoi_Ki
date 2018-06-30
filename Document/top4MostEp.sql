@@ -166,3 +166,14 @@ AS
            ,0)
 	END
 --trigger xu li ngay  history va favorite
+
+--reseed
+USE AnimeVietsub;  
+GO  
+DBCC CHECKIDENT ('Anime', RESEED,0);  
+GO
+--
+USE AnimeVietsub;  
+GO  
+DBCC CHECKIDENT ('AnimeEpisodes', RESEED, 0);  
+GO

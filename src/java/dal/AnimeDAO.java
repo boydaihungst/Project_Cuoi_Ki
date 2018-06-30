@@ -180,10 +180,14 @@ public class AnimeDAO extends BaseDAO<Anime> {
     //top n anime moi cap nhat
     public ArrayList<Anime> get_top_n_ani_new_update(int top) {
         ArrayList<Anime> animes = new ArrayList<>();
-        String query;
+        String query="";
         try {
-            query = " SELECT TOP " + top + " a.[AniID]\n"
-                    + "      ,[AniName]\n"
+            if (top != 0) {//truong hop la tim theo top bao nhieu day
+                query = "SELECT TOP " + top + " [AniID]\n";
+            } else {//truong hop tim all
+                query = "SELECT [AniID]\n";
+            }
+            query += "      ,[AniName]\n"
                     + "      ,[AniSeason]\n"
                     + "      ,[ReleaseTime]\n"
                     + "      ,[AniStatus]\n"

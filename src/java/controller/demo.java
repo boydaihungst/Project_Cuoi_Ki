@@ -43,11 +43,11 @@ public class demo extends HttpServlet {
         TimeUtils timeUtils = new TimeUtils();
 
         String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-        ArrayList<Anime> left_side_animes = aniDAO.get_top_n_ani_season(24, currentDate, timeUtils.getStartTimeOfMonth(TimeUtils.CURRENT_SEASON), TimeUtils.BY_SEASON);
+        ArrayList<Anime> left_side_animes = aniDAO.get_top_n_ani_season(0, currentDate, timeUtils.getStartTimeOfMonth(TimeUtils.CURRENT_SEASON), TimeUtils.BY_SEASON);
         ArrayList<Anime> down_left_side_animes = aniDAO.get_top_n_most_ep(4);
         ArrayList<Anime> right_side_animes = aniDAO.get_top_n_most_view_of_day(10);
-        ArrayList<Anime> left_side_animes_1 = aniDAO.get_top_n_ani_season(24, timeUtils.getStartTimeOfMonth(TimeUtils.PRE_SEASON), timeUtils.getStartTimeOfMonth(TimeUtils.CURRENT_SEASON), TimeUtils.BY_SEASON);
-        ArrayList<Anime> left_side_animes_2 = aniDAO.get_top_n_ani_new_update(24);
+        ArrayList<Anime> left_side_animes_1 = aniDAO.get_top_n_ani_season(0, timeUtils.getStartTimeOfMonth(TimeUtils.PRE_SEASON), timeUtils.getStartTimeOfMonth(TimeUtils.CURRENT_SEASON), TimeUtils.BY_SEASON);
+        ArrayList<Anime> left_side_animes_2 = aniDAO.get_top_n_ani_new_update(0);
         ArrayList<Categories> cats = catDAO.getAll();
         
         

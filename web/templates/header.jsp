@@ -133,7 +133,46 @@
             .navbar-collapse{
                 padding-top: 53px;
             }
-
+            #login-form{
+                /*display:none;*/
+                border: 1px #43a6df solid; 
+                z-index:10;
+                position: fixed;
+                top:200px;
+                padding: 15px 25px 25px;
+                width: 350px;
+                background-color: black;
+            }
+            #login-form>.btn-close{
+                background: url("img/close.png") no-repeat left center  !important;
+                width: 20px;
+                height: 20px;
+                position: absolute;
+                top:-10px;
+                right: -10px;
+                z-index:9999;
+            }
+            #login-form input{
+                padding:15px ;
+                color:black;
+                outline:none;
+                width: 100%;
+                height: 30px;
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+            #login-form button{
+                width: 40%;
+            }
+            #login-form>.title{
+                margin-top: 10px;
+                margin-bottom: 15px;
+                font-size: 22px;
+            }
+            #login-form>#respond{
+                display: none;
+                color:red;
+            }
         </style>
     </head>
     <body>
@@ -154,9 +193,19 @@
                     </div>
                 </form>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#"><span class="glyphicon glyphicon-user"></span>Đăng nhập</a></li>
-                    <li><a href="#"><span class="glyphicon glyphicon-log-in"></span>Đăng kí</a></li>
+                    <li id="login-btn"><a href="" onclick="return false;"><span class="glyphicon glyphicon-user"></span>Đăng nhập</a></li>
+                    <li><a href="" onclick="return false;"><span class="glyphicon glyphicon-log-in"></span>Đăng kí</a></li>
                 </ul>
+            </div>
+            <!--login-->
+            <div id="login-form" class="text-center">
+                <a href="" onclick="return false;" class="btn-close" ></a>
+                <div class="title">Đăng nhập</div>
+                <input name="username" type="text" placeholder="Tên đăng nhập"/>
+                <input name="password" type="password" placeholder="Mật khẩu"/>
+                <div id="respond">Sai tên tài khoản hoặc mật khẩu</div>
+                <button class="btn btn-primary login-btn">Đăng nhập</button>
+                <button class="btn btn-primary ">Đăng kí</button>
             </div>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
@@ -197,7 +246,24 @@
                 <li><a href="#">Lịch Chiếu Anime</a></li>
             </ul>
         </div>
+
         <script>
+            //show/close login form
+            $(document).ready(function () {
+                $("#login-form>.btn-close").click(function () {
+                    $("#login-form").hide();
+                });
+                $("#login-btn").click(function () {
+                    $("#login-form").toggle();
+                });
+                $("#login-form>input").change(function () {
+                    $("#login-form>#respond").hide();
+                });
+                $("#login-form>.login-btn").click(function () {
+                    login();
+                });
+            });
+            //search = ajax
             function search_by_name(value) {
                 var xhttp;
                 xhttp = new XMLHttpRequest();
@@ -211,6 +277,31 @@
                 };
                 xhttp.open("GET", "<%=request.getContextPath()%>/tim-kiem?animename=" + value, true);
                 xhttp.send();
+            }
+
+            function login() {
+                var un, pw;
+                un = document.getElementsByName('username')[0].value;
+                pw = document.getElementsByName('password')[0].value;
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        console.log(this.responseText);
+                        if (this.responseText === "false") {
+                            $(document).ready(function () {
+                                $("#login-form>#respond").show();
+                            });
+                        } else {
+                            $(document).ready(function () {
+                                $("#login-form").hide();
+                            });
+                        }
+                    }
+                };
+                xhttp.open("POST", "<%=request.getContextPath()%>/tai-khoan/auth", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("username=" + un + "&password=" + pw);
             }
         </script> 
     </body>
