@@ -5,21 +5,18 @@
             <url>web/view/homepage.jsp</url>
             <bookmark id="1">
                 <name/>
-                <line>413</line>
+                <line>409</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/src/java/dal/AnimeDAO.java</file>
             <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/src/java/controller/LinkFilter.java</file>
             <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/web/WEB-INF/web.xml</file>
-            <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/src/java/controller/account/auth.java</file>
-            <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/src/java/controller/anime/ViewAnime.java</file>
+            <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/src/java/controller/Search.java</file>
             <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/web/view/homepage.jsp</file>
-            <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/src/java/controller/demo.java</file>
-            <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/web/templates/header.jsp</file>
+            <file>file:/D:/Github/Java_Web/Project_Cuoi_Ki/src/java/controller/Homepage.java</file>
         </group>
     </open-files>
 </project-private>

@@ -269,10 +269,10 @@
     </head>
     <body>
         <div class="container-body">
-            <div class="container-fluid">
+            <div class="container-fluid header">
                 <jsp:include page="/templates/header.jsp"></jsp:include>
                 </div>
-                <div class="container">
+                <div id="body-container" class="container">
                     <div class="row">
                         <div class="col-sm-8 left-side">
                             <ul class="nav nav-tabs">

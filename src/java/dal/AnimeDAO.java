@@ -240,27 +240,21 @@ public class AnimeDAO extends BaseDAO<Anime> {
                     + "  WHERE 1=1 ";
             if (modal.getAniName() != null && !modal.getAniName().isEmpty()) {
                 paramIndex++;
-                query += " AND [AniName] = ?\n,";
+                query += " AND [AniName] like ?\n";
                 Object[] objects = new Object[2];
-                objects[0] = modal.getAniName();
+                objects[0] ="%"+ modal.getAniName()+"%";
                 objects[1] = "String";
                 params.put(paramIndex, objects);
             }
-
-//            paramIndex++;
-//            query += " WHERE ID = ?";
-//            Object[] objects = new Object[2];
-//            objects[0] = modal.getUser().getID();
-//            objects[1] = "String";
-//            params.put(paramIndex, objects);
             PreparedStatement statement = connection.prepareStatement(query);
             for (Map.Entry<Integer, Object[]> entry : params.entrySet()) {
+                
                 Integer key = entry.getKey();
                 Object[] value = entry.getValue();
-                if (value[1].equals("int")) {
+                if (value[1].toString().equals("int")) {
                     statement.setInt(key, (Integer) value[0]);
                 }
-                if (value[1].equals("String")) {
+                if (value[1].toString().equals("String")) {
                     statement.setString(key, value[0].toString());
                 }
             }

@@ -144,7 +144,9 @@
                 top:200px;
                 padding: 15px 25px 25px;
                 width: 350px;
+                /*width:0;*/
                 background-color: black;
+
             }
             #login-form>.btn-close{
                 background: url("img/close.png") no-repeat left center  !important;
@@ -187,7 +189,7 @@
 
                 <form class="navbar-form navbar-left search-form" action="">
                     <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Tìm kiếm" onkeypress="search_by_name(this.value)">
+                        <input type="text" class="form-control" placeholder="Tìm kiếm" onkeyup="search_by_name(this.value)"/>
                         <div class="input-group-btn">
                             <button class="btn btn-default" type="submit">
                                 <i class="glyphicon glyphicon-search"></i>
@@ -203,12 +205,13 @@
                 <%} else {%>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="" onclick="return false;"><span class="glyphicon glyphicon-user"></span><%= account.getUsername()%></a></li>
+                    <li><a href="" onclick="return false;"><span class="glyphicon glyphicon-list-alt"></span>Anime đã lưu</a></li>
                     <li id="logout-btn"><a href="" onclick="return false;"><span class="glyphicon glyphicon-log-out"></span>Đăng xuất</a></li>
                 </ul>
                 <%}%>
             </div>
             <!--login-->
-            <form id="login-form" class="text-center" action="" onsubmit="return false;" method="post">
+            <form class="text-center" id="login-form"  action="" onsubmit="return false;" method="post">
                 <a href="" onclick="return false;" class="btn-close" ></a>
                 <div class="title">Đăng nhập</div>
                 <input name="username" type="text" placeholder="Tên đăng nhập"/>
@@ -261,10 +264,10 @@
             //show/close login form
             $(document).ready(function () {
                 $("#login-form>.btn-close").click(function () {
-                    $("#login-form").hide();
+                    show_login_box();
                 });
                 $("#login-btn").click(function () {
-                    $("#login-form").toggle();
+                    show_login_box();
                 });
                 $("#login-form>input").change(function () {
                     $("#login-form>#respond").hide();
@@ -279,21 +282,32 @@
                     login();
                 });
             });
+            function show_login_box() {
+                if ($('#body-container').css('opacity') != 1) {
+                    $('#body-container').css('opacity', '1');
+                } else {
+                    $('#body-container').css('opacity', '0.1');
+                }
+                $("#login-form").toggle("fast");
+            };
             //search = ajax
             function search_by_name(value) {
+                
                 var xhttp;
                 xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
                     if (this.readyState === 4 && this.status === 200) {
+                        
+                            console.log(this.responseText);
                         var obj = JSON.parse(this.responseText);
                         for (var item in obj) {
-                            document.getElementById("search-box").innerHTML = item.aniName;
+                           // document.getElementById("search-box").innerHTML = item.aniName;
                         }
                     }
                 };
                 xhttp.open("GET", "<%=request.getContextPath()%>/tim-kiem?animename=" + value, true);
                 xhttp.send();
-            }
+            };
 
             function login() {
                 var un, pw;
@@ -316,7 +330,7 @@
                 xhttp.open("POST", "<%=request.getContextPath()%>/tai-khoan/auth", true);
                 xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhttp.send("username=" + un + "&password=" + pw);
-            }
+            };
             function logout() {
                 var xhttp;
                 xhttp = new XMLHttpRequest();
@@ -328,7 +342,7 @@
                 };
                 xhttp.open("GET", "<%=request.getContextPath()%>/tai-khoan/auth", true);
                 xhttp.send();
-            }
+            };
         </script> 
     </body>
 </html>
