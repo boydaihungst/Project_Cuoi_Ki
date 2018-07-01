@@ -4,6 +4,9 @@
     Author     : DrAgOn
 --%>
 
+<%@page import="java.util.LinkedHashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.HashMap"%>
 <%@page import="model.Anime"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -11,19 +14,9 @@
 <html>
     <head>
         <%
-            ArrayList<Anime> leftAnimes = (ArrayList<Anime>) request.getAttribute("left_side_animes");
-            ArrayList<Anime> leftAnimes_1 = (ArrayList<Anime>) request.getAttribute("left_side_animes_1");
-            ArrayList<Anime> leftAnimes_2 = (ArrayList<Anime>) request.getAttribute("left_side_animes_2");
-            ArrayList<Anime> downLeftAnimes = (ArrayList<Anime>) request.getAttribute("down_left_side_animes");
-            ArrayList<Anime> rightAnimes = (ArrayList<Anime>) request.getAttribute("right_side_animes");
-
-            ArrayList<ArrayList<Anime>> leftAnimes_items = new ArrayList();
-
-            leftAnimes_items.add(leftAnimes);
-            leftAnimes_items.add(leftAnimes_1);
-            leftAnimes_items.add(leftAnimes_2);
-
-            String[] leftAnimes_titles = {"ANIME MÙA XUÂN 2018", "ANIME MÙA ĐÔNG 2017", "ANIME MỚI CẬP NHẬT"};
+            Map<String, ArrayList<Anime>> tabs_anime = (LinkedHashMap<String, ArrayList<Anime>>) request.getAttribute("3_tabs_anime");
+            ArrayList<Anime> anime_most_ep = (ArrayList<Anime>) request.getAttribute("anime_most_ep");
+            ArrayList<Anime> anime_most_clicked = (ArrayList<Anime>) request.getAttribute("anime_most_clicked");
         %>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -283,41 +276,44 @@
                     <div class="row">
                         <div class="col-sm-8 left-side">
                             <ul class="nav nav-tabs">
-                                <li class="col-sm-4 active"><a data-toggle="tab" href="#menu0">Anime mùa mới</a></li>
-                                <li class="col-sm-4"><a data-toggle="tab" href="#menu1">Anime mùa trước</a></li>
-                                <li class="col-sm-4"><a data-toggle="tab" href="#menu2">Anime mới cập nhật</a></li>
-                            </ul>
-                            <div class="tab-content">
-                            <% for (int m = 0; m < leftAnimes_items.size(); m++) {%>
-                            <div id="menu<%=m%>" class="tab-pane fade in <%= m == 0 ? "active" : ""%>">
+                            <li class="col-sm-4 active"><a data-toggle="tab" href="#menu0">Anime mùa mới</a></li>
+
+                            <li class="col-sm-4"><a data-toggle="tab" href="#menu1">Anime mùa trước</a></li>
+                            <li class="col-sm-4"><a data-toggle="tab" href="#menu2">Anime mới cập nhật</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <% int m = -1;%>
+                            <% for (Map.Entry<String, ArrayList<Anime>> en : tabs_anime.entrySet()) {
+                            %>
+                            <div id="menu<%=++m%>" class="tab-pane fade in <%= m == 0 ? "active" : ""%>">
                                 <div class="row title-container ">
-                                    <span class="title-tab-left col-sm-10"><%=leftAnimes_titles[m]%></span> <%if (leftAnimes_items.get(m).size() > 24) {%><a href="#" class="view-more col-sm-2">Xem Thêm >></a><%}%>
+                                    <span class="title-tab-left col-sm-10"><%= en.getKey() %></span> <%if (en.getValue().size() > 24) {%><a href="#" class="view-more col-sm-2">Xem Thêm >></a><%}%>
                                 </div>
                                 <% for (int i = 0; i < 24; i++) {%>
                                 <div class="row">
                                     <%for (int j = 0; j < 4; j++) {
-                                            if (i >= leftAnimes_items.get(m).size()) {
+                                            if (i >= en.getValue().size()) {
                                                 break;
                                             }
                                     %>
                                     <!--item-->
                                     <div class="col-sm-3 preview-item">
-                                        <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= leftAnimes_items.get(m).get(i).getAniId()%>">
+                                        <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= en.getValue().get(i).getAniId()%>">
                                             <div class="item-info <%= j >= 2 ? "item-info-box-right" : "item-info-box-left"%>">
                                                 <div class="item-info-title">
-                                                    <%= leftAnimes_items.get(m).get(i).getAniName()%>
+                                                    <%= en.getValue().get(i).getAniName()%>
                                                 </div>
                                                 <div class="item-info-content">
-                                                    <%= leftAnimes_items.get(m).get(i).getDesc()%>
+                                                    <%= en.getValue().get(i).getDesc()%>
                                                 </div>
                                             </div>
                                             <div class="item-border item">
                                                 <div class="top-caption text-center ">
-                                                    <p><%= leftAnimes_items.get(m).get(i).getEpsRel() == 0 ? "???" : leftAnimes_items.get(m).get(i).getEpsRel()%>/<%= leftAnimes_items.get(m).get(i).getEpsMax() == 0 ? "???" : leftAnimes_items.get(m).get(i).getEpsMax()%> Tap</p>
+                                                    <p><%= en.getValue().get(i).getEpsRel() == 0 ? "???" : en.getValue().get(i).getEpsRel()%>/<%= en.getValue().get(i).getEpsMax() == 0 ? "???" : en.getValue().get(i).getEpsMax()%> Tap</p>
                                                 </div>
-                                                <img src="<%= request.getContextPath() + "/" + leftAnimes_items.get(m).get(i).getPicture()%>" alt="" class="img-responsive img-icon ">
+                                                <img src="<%= request.getContextPath() + "/" + en.getValue().get(i).getPicture()%>" alt="" class="img-responsive img-icon ">
                                                 <div class="bottom-caption text-center ">
-                                                    <p><%= leftAnimes_items.get(m).get(i).getAniName()%></p>
+                                                    <p><%= en.getValue().get(i).getAniName()%></p>
                                                 </div>
                                             </div>
                                         </a>
@@ -329,7 +325,7 @@
                                 <%   }
                                 %>
                             </div>
-                            <%}
+                            <% }
                             %>
                         </div>
                         <div class="row title-container ">
@@ -344,19 +340,19 @@
                                     <div class="item-info <%= j >= 2 ? "item-info-box-right" : "item-info-box-left"%>">
 
                                         <div class="item-info-title">
-                                            <%= downLeftAnimes.get(j).getAniName()%>
+                                            <%= anime_most_ep.get(j).getAniName()%>
                                         </div>
                                         <div class="item-info-content">
-                                            <%= downLeftAnimes.get(j).getDesc()%>
+                                            <%= anime_most_ep.get(j).getDesc()%>
                                         </div>
                                     </div>
                                     <div class="item-border item">
                                         <div class="top-caption text-center ">
-                                            <p><%= downLeftAnimes.get(j).getEpsRel() == 0 ? "???" : downLeftAnimes.get(j).getEpsRel()%>/<%= downLeftAnimes.get(j).getEpsMax() == 0 ? "???" : downLeftAnimes.get(j).getEpsMax()%> Tap</p>
+                                            <p><%= anime_most_ep.get(j).getEpsRel() == 0 ? "???" : anime_most_ep.get(j).getEpsRel()%>/<%= anime_most_ep.get(j).getEpsMax() == 0 ? "???" : anime_most_ep.get(j).getEpsMax()%> Tap</p>
                                         </div>
-                                        <img src="<%= request.getContextPath() + "/" + downLeftAnimes.get(j).getPicture()%>" alt="" class="img-responsive img-icon ">
+                                        <img src="<%= request.getContextPath() + "/" + anime_most_ep.get(j).getPicture()%>" alt="" class="img-responsive img-icon ">
                                         <div class="bottom-caption text-center ">
-                                            <p><%= downLeftAnimes.get(j).getAniName()%></p>
+                                            <p><%= anime_most_ep.get(j).getAniName()%></p>
                                         </div>
                                     </div>
                                 </a>
@@ -374,16 +370,16 @@
                         <div class="row">
                             <div class="col-sm-12 title-fanpage-right">Anime được xem nhiều trong ngày</div>
                         </div>
-                        <%for (int j = 0; j < rightAnimes.size(); j++) {%>
+                        <%for (int j = 0; j < anime_most_clicked.size(); j++) {%>
                         <div class="row right-container">
                             <div class="col-sm-4">
                                 <div  class="preview-item">
                                     <a href="#">
                                         <div class="item-border-right item">
                                             <div class="top-caption top-caption-right text-center ">
-                                                <p><%= rightAnimes.get(j).getEpsRel() == 0 ? "???" : rightAnimes.get(j).getEpsRel()%>/<%= rightAnimes.get(j).getEpsMax() == 0 ? "???" : rightAnimes.get(j).getEpsMax()%> Tap</p>
+                                                <p><%= anime_most_clicked.get(j).getEpsRel() == 0 ? "???" : anime_most_clicked.get(j).getEpsRel()%>/<%= anime_most_clicked.get(j).getEpsMax() == 0 ? "???" : anime_most_clicked.get(j).getEpsMax()%> Tap</p>
                                             </div>
-                                            <img src="<%= request.getContextPath() + "/" + rightAnimes.get(j).getPicture()%>" alt="" class="img-responsive img-icon img-icon-right">
+                                            <img src="<%= request.getContextPath() + "/" + anime_most_clicked.get(j).getPicture()%>" alt="" class="img-responsive img-icon img-icon-right">
                                         </div>
                                     </a>
                                 </div>
@@ -393,7 +389,7 @@
                                     <div class="col-sm-12 preview-item left-title-anime">
                                         <div class="title-anime-right">
                                             <a href="#">
-                                                <p><%= rightAnimes.get(j).getAniName()%></p>
+                                                <p><%= anime_most_clicked.get(j).getAniName()%></p>
                                             </a>
                                         </div>
                                     </div>
@@ -402,7 +398,7 @@
                                     <div class="col-sm-12 ">
                                         <div class="content-anime-right ">
                                             <a href="#">
-                                                <p><%= rightAnimes.get(j).getDesc().length() >= 100 ? rightAnimes.get(j).getDesc().substring(0, 100) + "..." : rightAnimes.get(j).getDesc()%></p>
+                                                <p><%= anime_most_clicked.get(j).getDesc().length() >= 100 ? anime_most_clicked.get(j).getDesc().substring(0, 100) + "..." : anime_most_clicked.get(j).getDesc()%></p>
                                             </a>
                                         </div>
                                     </div>

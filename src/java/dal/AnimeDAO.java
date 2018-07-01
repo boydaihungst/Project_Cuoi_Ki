@@ -69,7 +69,7 @@ public class AnimeDAO extends BaseDAO<Anime> {
                     break;
                 case TimeUtils.BY_SEASON:
                     //tim theo mua
-                    query += "  WHERE ReleaseTime < ? AND ReleaseTime >= ? \n"
+                    query += "  WHERE ReleaseTime >= ? AND ReleaseTime <= ? \n"
                             + "  Order by UpdateTime desc";
                     statement = connection.prepareCall(query);
                     statement.setDate(1, Date.valueOf(fromTime));
@@ -78,7 +78,7 @@ public class AnimeDAO extends BaseDAO<Anime> {
                 default:
                     return null;
             }
-            //System.out.println(query);
+//            System.out.println(query);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Anime ani = new Anime();

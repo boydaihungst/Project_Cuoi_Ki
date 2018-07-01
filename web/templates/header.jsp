@@ -4,6 +4,7 @@
     Author     : DrAgOn
 --%>
 
+<%@page import="model.Account"%>
 <%@page import="model.Categories"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -13,6 +14,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%
             ArrayList<Categories> cats = (ArrayList<Categories>) request.getAttribute("cats");
+
+            Account account = (Account) session.getAttribute("account");
         %>
         <style>
             /* width */
@@ -134,7 +137,7 @@
                 padding-top: 53px;
             }
             #login-form{
-                /*display:none;*/
+                display:none;
                 border: 1px #43a6df solid; 
                 z-index:10;
                 position: fixed;
@@ -192,21 +195,28 @@
                         </div>
                     </div>
                 </form>
+                <% if (account == null) { %>
                 <ul class="nav navbar-nav navbar-right">
                     <li id="login-btn"><a href="" onclick="return false;"><span class="glyphicon glyphicon-user"></span>Đăng nhập</a></li>
                     <li><a href="" onclick="return false;"><span class="glyphicon glyphicon-log-in"></span>Đăng kí</a></li>
                 </ul>
+                <%} else {%>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="" onclick="return false;"><span class="glyphicon glyphicon-user"></span><%= account.getUsername()%></a></li>
+                    <li id="logout-btn"><a href="" onclick="return false;"><span class="glyphicon glyphicon-log-out"></span>Đăng xuất</a></li>
+                </ul>
+                <%}%>
             </div>
             <!--login-->
-            <div id="login-form" class="text-center">
+            <form id="login-form" class="text-center" action="" onsubmit="return false;" method="post">
                 <a href="" onclick="return false;" class="btn-close" ></a>
                 <div class="title">Đăng nhập</div>
                 <input name="username" type="text" placeholder="Tên đăng nhập"/>
                 <input name="password" type="password" placeholder="Mật khẩu"/>
                 <div id="respond">Sai tên tài khoản hoặc mật khẩu</div>
-                <button class="btn btn-primary login-btn">Đăng nhập</button>
+                <button type="submit" class="btn btn-primary login-btn">Đăng nhập</button>
                 <button class="btn btn-primary ">Đăng kí</button>
-            </div>
+            </form>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
@@ -259,6 +269,12 @@
                 $("#login-form>input").change(function () {
                     $("#login-form>#respond").hide();
                 });
+                $("#logout-btn").click(function () {
+                    logout();
+                });
+                $("#login-form").submit(function () {
+                    login();
+                });
                 $("#login-form>.login-btn").click(function () {
                     login();
                 });
@@ -293,15 +309,25 @@
                                 $("#login-form>#respond").show();
                             });
                         } else {
-                            $(document).ready(function () {
-                                $("#login-form").hide();
-                            });
+                            window.location.reload();
                         }
                     }
                 };
                 xhttp.open("POST", "<%=request.getContextPath()%>/tai-khoan/auth", true);
                 xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhttp.send("username=" + un + "&password=" + pw);
+            }
+            function logout() {
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        console.log(this.responseText);
+                        window.location.reload();
+                    }
+                };
+                xhttp.open("GET", "<%=request.getContextPath()%>/tai-khoan/auth", true);
+                xhttp.send();
             }
         </script> 
     </body>

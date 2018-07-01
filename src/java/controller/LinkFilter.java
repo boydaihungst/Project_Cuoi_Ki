@@ -34,6 +34,7 @@ public class LinkFilter implements Filter {
     public LinkFilter() {
     }
     
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
@@ -47,6 +48,10 @@ public class LinkFilter implements Filter {
         } catch (NumberFormatException e) {
             log(e.getMessage());
         }
+        //check login
+//        if(httpRequest.getSession(true).getAttribute("account")!=null){
+//            
+//        }
         chain.doFilter(request, response);
     }
 
