@@ -24,6 +24,10 @@
         <servlet-name>Homepage</servlet-name>
         <servlet-class>controller.Homepage</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>reg</servlet-name>
+        <servlet-class>controller.account.reg</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/tim-kiem</url-pattern>
@@ -39,6 +43,10 @@
     <servlet-mapping>
         <servlet-name>Homepage</servlet-name>
         <url-pattern>/homepage</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>reg</servlet-name>
+        <url-pattern>/tai-khoan/reg</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

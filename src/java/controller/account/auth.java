@@ -32,6 +32,7 @@ public class auth extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html; charset=UTF-8");
         HttpSession session = request.getSession(true);
         String username = request.getParameter("username");
         String password = request.getParameter("password");

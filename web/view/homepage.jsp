@@ -31,6 +31,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="shortcut icon" href="img/favicon.ico">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/4.0.4/lazysizes.min.js" ></script>
         <style>
             body{
                 color: white;
@@ -48,9 +49,10 @@
                 text-align: center;
             }
             .container-body{
+                background: url('img/background.jpg') fixed no-repeat center !important;
                 margin: auto;
                 width: 100%;
-                background-color: #171717 !important;
+
             }
 
             .tab-title{
@@ -91,6 +93,22 @@
                 left: 0;
                 width: 100%;
             }
+            /*            .play-btn-overlay{
+                            box-shadow: 0 0 10px 5px #171717 !important;
+                            position: absolute;
+                            top: 35%;
+                            left: 35%;
+                            z-index: 99;
+                            width: auto;
+                            height: 50px;
+                            margin:0;
+                            border-radius: 50%;
+                            padding:0;
+                        }
+                        .left-side .preview-item:hover .play-btn-overlay{
+                            display:none;
+                            
+                        }*/
             .top-caption{
                 margin:0;
                 padding:0;
@@ -141,7 +159,7 @@
                 opacity: 0;
                 margin: 0;
                 padding: 10px;
-                box-shadow: 0 0 10px 2px #43a6df;
+                box-shadow: 0 0 10px 2px chartreuse;
                 position: absolute;
                 width: 250px;
                 height: 200px;
@@ -161,12 +179,12 @@
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 font-size: 14px;
-                color:#43a6df;
-                border-bottom: 1px solid #43a6df;
+                color:chartreuse;
+                border-bottom: 1px solid chartreuse;
 
             }
             .item-info-content{
-                height: 155px;
+                height: 160px;
                 padding-top: 10px;
                 font-size: 12px;
                 color: #c5c5c5;
@@ -196,7 +214,7 @@
                 width: 150px; 
             }
             .title-anime-right p{
-                color: #43a6df;
+                color: chartreuse;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -227,8 +245,8 @@
             .title-container{
                 margin-top:20px;
                 margin-bottom: 15px;
-                color: #43a6df;
-                border-bottom: 1.5px solid #43a6df!important;
+                color: chartreuse;
+                border-bottom: 1.5px solid chartreuse!important;
             }
             .title-tab-left{
                 font-size: 24px;
@@ -239,9 +257,9 @@
                 margin-bottom: 15px;
                 border:none;
             }
-            /*background-color: #43a6df;*/
+            /*background-color: chartreuse;*/
             .nav-tabs>.active{
-                border-bottom: 2.5px solid #43a6df!important;
+                border-bottom: 2.5px solid chartreuse!important;
             }
             .nav-tabs>li{
                 border-bottom: 2.5px solid white;
@@ -250,13 +268,13 @@
             .title-fanpage-right{
                 padding:0;
                 width: auto;
-                color: #43a6df;
+                color: chartreuse;
                 display: block;
                 margin-left: 15px;
                 margin-top: 10px;
                 padding-bottom: 12px;
                 margin-bottom: 10px;
-                border-bottom: 2.5px solid #43a6df!important;
+                border-bottom: 2.5px solid chartreuse!important;
             }
             .left-title-anime{
                 padding-bottom: 0;
@@ -276,18 +294,17 @@
                     <div class="row">
                         <div class="col-sm-8 left-side">
                             <ul class="nav nav-tabs">
-                            <li class="col-sm-4 active"><a data-toggle="tab" href="#menu0">Anime mùa mới</a></li>
-
-                            <li class="col-sm-4"><a data-toggle="tab" href="#menu1">Anime mùa trước</a></li>
-                            <li class="col-sm-4"><a data-toggle="tab" href="#menu2">Anime mới cập nhật</a></li>
-                        </ul>
-                        <div class="tab-content">
+                                <li class="col-sm-4 active"><a data-toggle="tab" href="#menu0">Anime mùa mới</a></li>
+                                <li class="col-sm-4"><a data-toggle="tab" href="#menu1">Anime mùa trước</a></li>
+                                <li class="col-sm-4"><a data-toggle="tab" href="#menu2">Anime mới cập nhật</a></li>
+                            </ul>
+                            <div class="tab-content">
                             <% int m = -1;%>
                             <% for (Map.Entry<String, ArrayList<Anime>> en : tabs_anime.entrySet()) {
                             %>
                             <div id="menu<%=++m%>" class="tab-pane fade in <%= m == 0 ? "active" : ""%>">
                                 <div class="row title-container ">
-                                    <span class="title-tab-left col-sm-10"><%= en.getKey() %></span> <%if (en.getValue().size() > 24) {%><a href="#" class="view-more col-sm-2">Xem Thêm >></a><%}%>
+                                    <span class="title-tab-left col-sm-10"><%= en.getKey()%></span> <%if (en.getValue().size() > 24) {%><a href="#" class="view-more col-sm-2">Xem Thêm >></a><%}%>
                                 </div>
                                 <% for (int i = 0; i < 24; i++) {%>
                                 <div class="row">
@@ -311,7 +328,10 @@
                                                 <div class="top-caption text-center ">
                                                     <p><%= en.getValue().get(i).getEpsRel() == 0 ? "???" : en.getValue().get(i).getEpsRel()%>/<%= en.getValue().get(i).getEpsMax() == 0 ? "???" : en.getValue().get(i).getEpsMax()%> Tap</p>
                                                 </div>
-                                                <img src="<%= request.getContextPath() + "/" + en.getValue().get(i).getPicture()%>" alt="" class="img-responsive img-icon ">
+                                                <!--                                                <div class="text-center ">
+                                                                                                    <img src="img/play-btn.png" alt="" class="play-btn-overlay img-responsive"/>
+                                                                                                </div>-->
+                                                <img data-src="<%= request.getContextPath() + "/" + en.getValue().get(i).getPicture()%>" alt="" class="img-responsive img-icon lazyload">
                                                 <div class="bottom-caption text-center ">
                                                     <p><%= en.getValue().get(i).getAniName()%></p>
                                                 </div>
@@ -350,7 +370,10 @@
                                         <div class="top-caption text-center ">
                                             <p><%= anime_most_ep.get(j).getEpsRel() == 0 ? "???" : anime_most_ep.get(j).getEpsRel()%>/<%= anime_most_ep.get(j).getEpsMax() == 0 ? "???" : anime_most_ep.get(j).getEpsMax()%> Tap</p>
                                         </div>
-                                        <img src="<%= request.getContextPath() + "/" + anime_most_ep.get(j).getPicture()%>" alt="" class="img-responsive img-icon ">
+                                        <img data-src="<%= request.getContextPath() + "/" + anime_most_ep.get(j).getPicture()%>" class="img-responsive img-icon lazyload">
+                                        <noscript> 
+                                        <img src="<%= request.getContextPath() + "/" + anime_most_ep.get(j).getPicture()%>" class="img-responsive img-icon ">
+                                        </noscript>
                                         <div class="bottom-caption text-center ">
                                             <p><%= anime_most_ep.get(j).getAniName()%></p>
                                         </div>
@@ -365,7 +388,7 @@
                             <div class="col-sm-12 title-fanpage-right">Fanpage của website</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-12 fb-page fb_iframe_widget" data-href="https://www.facebook.com/Ani4u2/" data-width="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="adapt_container_width=true&amp;app_id=448777685319550&amp;container_width=0&amp;hide_cover=false&amp;href=https%3A%2F%2Fwww.facebook.com%2FAni4u2%2F&amp;locale=vi_VN&amp;sdk=joey&amp;show_facepile=true&amp;small_header=false&amp;width=300"><span style="vertical-align: bottom; width: 300px; height: 196px;"><iframe name="f1602c80990609c" width="300px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" allow="encrypted-media" title="fb:page Facebook Social Plugin" src="https://www.facebook.com/v2.10/plugins/page.php?adapt_container_width=true&amp;app_id=448777685319550&amp;channel=http%3A%2F%2Fstaticxx.facebook.com%2Fconnect%2Fxd_arbiter%2Fr%2FxaOI6zd9HW9.js%3Fversion%3D42%23cb%3Df3193b8ef4b7ed%26domain%3Dani4u.org%26origin%3Dhttp%253A%252F%252Fani4u.org%252Ff1dff02becd9b64%26relation%3Dparent.parent&amp;container_width=0&amp;hide_cover=false&amp;href=https%3A%2F%2Fwww.facebook.com%2FAni4u2%2F&amp;locale=vi_VN&amp;sdk=joey&amp;show_facepile=true&amp;small_header=false&amp;width=300" style="border: none; visibility: visible; width: 300px; height: 196px;" class=""></iframe></span></div>
+                            <div class="col-sm-12 fb-page fb_iframe_widget" data-href="https://www.facebook.com/Anime-Online-2027409394253651" data-width="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="adapt_container_width=true&amp;app_id=448777685319550&amp;container_width=0&amp;hide_cover=false&amp;href=https%3A%2F%2Fwww.facebook.com%2FAni4u2%2F&amp;locale=vi_VN&amp;sdk=joey&amp;show_facepile=true&amp;small_header=false&amp;width=300"><span style="vertical-align: bottom; width: 300px; height: 196px;"><iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FAnime-Online-2027409394253651&tabs=timeline&width=330&height=200&small_header=false&adapt_container_width=false&hide_cover=false&show_facepile=true&appId" width="330" height="200" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe></span></div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12 title-fanpage-right">Anime được xem nhiều trong ngày</div>
@@ -379,7 +402,10 @@
                                             <div class="top-caption top-caption-right text-center ">
                                                 <p><%= anime_most_clicked.get(j).getEpsRel() == 0 ? "???" : anime_most_clicked.get(j).getEpsRel()%>/<%= anime_most_clicked.get(j).getEpsMax() == 0 ? "???" : anime_most_clicked.get(j).getEpsMax()%> Tap</p>
                                             </div>
-                                            <img src="<%= request.getContextPath() + "/" + anime_most_clicked.get(j).getPicture()%>" alt="" class="img-responsive img-icon img-icon-right">
+                                            <img data-src="<%= request.getContextPath() + "/" + anime_most_clicked.get(j).getPicture()%>" alt="" class="img-responsive img-icon img-icon-right lazyload">
+                                            <noscript> 
+                                            <img data-src="<%= request.getContextPath() + "/" + anime_most_clicked.get(j).getPicture()%>" alt="" class="img-responsive img-icon img-icon-right lazyload">
+                                            </noscript>
                                         </div>
                                     </a>
                                 </div>
@@ -410,5 +436,15 @@
                 </div>
             </div>
         </div>
+        <!--        <script type="text/javascript">
+                    $(document).ready(function () {
+                        $(function () {
+                            $(".img-responsive").lazyload({
+                                effect: "fadeIn",
+                                threshold : 50
+                            });
+                        });
+                    });
+                </script>-->
     </body>
 </html>
