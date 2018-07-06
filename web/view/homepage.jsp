@@ -21,276 +21,237 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Anime Online</title>
-        <!-- Latest compiled and minified CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <jsp:include page="/templates/libs.jsp"></jsp:include>
+            <style>
+                
+                a{
+                    transition: color 0.25s;
+                    -webkit-transition: color 0.25s; /* Safari 3.1 to 6.0 */
+                }
+                ul.nav-tabs a{
+                    width: 100%;
+                    text-align: center;
+                }
 
-        <!-- jQuery library -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+                .tab-title{
+                    font-size: 16px;
+                }
+                .left-side .preview-item:hover .top-caption{
+                    display: none;
+                }
+                .left-side,.right-side{
+                    margin: 0;
+                    padding:0;
+                    width: auto;
+                }
+                
+                .item-border{
+                    position: relative;
+                    width: 155px !important;
+                    height: 217px !important;
+                }
+                .bottom-caption {
+                    margin:0;
+                    padding:0;
+                    font-size:15px;
+                    background: black;
+                    opacity: 0.9;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                }
+                /*            .play-btn-overlay{
+                                box-shadow: 0 0 10px 5px #171717 !important;
+                                position: absolute;
+                                top: 35%;
+                                left: 35%;
+                                z-index: 99;
+                                width: auto;
+                                height: 50px;
+                                margin:0;
+                                border-radius: 50%;
+                                padding:0;
+                            }
+                            .left-side .preview-item:hover .play-btn-overlay{
+                                display:none;
+                                
+                            }*/
+                .top-caption{
+                    margin:0;
+                    padding:0;
+                    font-size:14px;
+                    opacity: 0.8;
+                    position: absolute;
+                    top: 3.5%;
+                    left: 5%;
+                    width: auto;
+                }
+                .bottom-caption p{
+                    padding: 5px 5px;
+                }
+                .top-caption p{
+                    background: red;
+                    padding: 2px 5px;
+                }
+                .bottom-caption p, .top-caption p{
+                    color:white;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    margin:0;
+                }
+                .top-caption-right{
+                    opacity: 1;
+                    font-size:12px;
+                    top: 0%;
+                    left: 0%;
+                }
+                .top-caption-right p{
+                    background: green;
+                }
+                .img-icon-right{
+                    height: auto;
+                }
+                .preview-item{
+                    width: auto;
+                    padding:10px;
+                }
+                /*item info box*/
+                .item-info{
+                    top:-99999px;
+                    opacity: 0;
+                    margin: 0;
+                    padding: 10px;
+                    box-shadow: 0 0 10px 2px chartreuse;
+                    position: absolute;
+                    width: 250px;
+                    height: 200px;
+                    background-color: rgba(0,0,0,.93);
+                    z-index: 100;
+                    transition: opacity 0.5s;
+                    -webkit-transition: opacity 0.5s; /* Safari 3.1 to 6.0 */
+                }
+                .item-info-box-left{
+                    right:-255px !important;
+                }
+                .item-info-box-right{
+                    left:-255px !important;
+                }
+                .item-info-title{
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    font-size: 14px;
+                    color:chartreuse;
+                    border-bottom: 1px solid chartreuse;
 
-        <!-- Latest compiled JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <link rel="shortcut icon" href="img/favicon.ico">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/4.0.4/lazysizes.min.js" ></script>
-        <style>
-            body{
-                color: white;
-            }
-            a{
-                text-decoration: none !important;
-                transition: color 0.25s;
-                -webkit-transition: color 0.25s; /* Safari 3.1 to 6.0 */
-            }
-            body a:hover{
-                text-decoration: none;
-            }
-            ul.nav-tabs a{
-                width: 100%;
-                text-align: center;
-            }
-            .container-body{
-                background: url('img/background.jpg') fixed no-repeat center !important;
-                margin: auto;
-                width: 100%;
-
-            }
-
-            .tab-title{
-                font-size: 16px;
-            }
-            .left-side .preview-item:hover .top-caption{
-                display: none;
-            }
-            .left-side,.right-side{
-                margin: 0;
-                padding:0;
-                width: auto;
-            }
-            .row{
-                margin: 0;
-                padding:0;
-            }
-            .item-border{
-                position: relative;
-                width: 155px !important;
-                height: 217px !important;
-            }
-
-            .item-border-right{
-                position: relative;
-                width: 100px;
-                height: 100px;
-                overflow: hidden;
-            }
-            .bottom-caption {
-                margin:0;
-                padding:0;
-                font-size:15px;
-                background: black;
-                opacity: 0.9;
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-            }
-            /*            .play-btn-overlay{
-                            box-shadow: 0 0 10px 5px #171717 !important;
-                            position: absolute;
-                            top: 35%;
-                            left: 35%;
-                            z-index: 99;
-                            width: auto;
-                            height: 50px;
-                            margin:0;
-                            border-radius: 50%;
-                            padding:0;
-                        }
-                        .left-side .preview-item:hover .play-btn-overlay{
-                            display:none;
-                            
-                        }*/
-            .top-caption{
-                margin:0;
-                padding:0;
-                font-size:14px;
-                opacity: 0.8;
-                position: absolute;
-                top: 3.5%;
-                left: 5%;
-                width: auto;
-            }
-            .bottom-caption p{
-                padding: 5px 5px;
-            }
-            .top-caption p{
-                background: red;
-                padding: 2px 5px;
-            }
-            .bottom-caption p, .top-caption p{
-                color:white;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                margin:0;
-            }
-            .top-caption-right{
-                opacity: 1;
-                font-size:12px;
-                top: 0%;
-                left: 0%;
-            }
-            .top-caption-right p{
-                background: green;
-            }
-            .img-icon{
-                width: 100%;
-                height: 100%;
-            }
-            .img-icon-right{
-                height: auto;
-            }
-            .preview-item{
-                width: auto;
-                padding:10px;
-            }
-            /*item info box*/
-            .item-info{
-                top:-99999px;
-                opacity: 0;
-                margin: 0;
-                padding: 10px;
-                box-shadow: 0 0 10px 2px chartreuse;
-                position: absolute;
-                width: 250px;
-                height: 200px;
-                background-color: rgba(0,0,0,.93);
-                z-index: 100;
-                transition: opacity 0.5s;
-                -webkit-transition: opacity 0.5s; /* Safari 3.1 to 6.0 */
-            }
-            .item-info-box-left{
-                right:-255px !important;
-            }
-            .item-info-box-right{
-                left:-255px !important;
-            }
-            .item-info-title{
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                font-size: 14px;
-                color:chartreuse;
-                border-bottom: 1px solid chartreuse;
-
-            }
-            .item-info-content{
-                height: 160px;
-                padding-top: 10px;
-                font-size: 12px;
-                color: #c5c5c5;
-                text-overflow: ellipsis;
-                overflow: hidden;
-            }
-            .left-side .preview-item:hover .item img{
-                box-shadow: 0 0 10px 2px white;
-            }
-            .left-side .item-border{
-                border:1px solid slategrey;
-            }
-            .left-side .preview-item:hover .item-info{
-                top:4%;
-                opacity: 1;
-            }
-            .left-side .preview-item .item-info:hover{
-                top:-99999px;
-                opacity: 0;
-            }
-            /*=======*/
-            /*phan ben phai ten anime thu nho*/
-            .title-anime-right{
-                margin:0;
-                padding:0;
-                font-size:14px;
-                width: 150px; 
-            }
-            .title-anime-right p{
-                color: chartreuse;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                margin:0;
-            }
-            .content-anime-right{
-                margin:0;
-                padding:0;
-                font-size:12px;
-                width: 150px;
-            }
-            .content-anime-right p{
-                color: white;
-                white-space: normal;
-                overflow: visible;
-                text-overflow: ellipsis;
-                margin:0;
-            }
-            .right-container:hover .content-anime-right p{
-                white-space: normal;
-                margin:0;
-            }
-            .view-more{
-                font-size: 12px;
-                padding-top: 15px;
-                float:right;
-            }
-            .title-container{
-                margin-top:20px;
-                margin-bottom: 15px;
-                color: chartreuse;
-                border-bottom: 1.5px solid chartreuse!important;
-            }
-            .title-tab-left{
-                font-size: 24px;
-                padding:0;
-                margin:0;
-            }
-            .nav-tabs{
-                margin-bottom: 15px;
-                border:none;
-            }
-            /*background-color: chartreuse;*/
-            .nav-tabs>.active{
-                border-bottom: 2.5px solid chartreuse!important;
-            }
-            .nav-tabs>li{
-                border-bottom: 2.5px solid white;
-                padding:0;
-            }
-            .title-fanpage-right{
-                padding:0;
-                width: auto;
-                color: chartreuse;
-                display: block;
-                margin-left: 15px;
-                margin-top: 10px;
-                padding-bottom: 12px;
-                margin-bottom: 10px;
-                border-bottom: 2.5px solid chartreuse!important;
-            }
-            .left-title-anime{
-                padding-bottom: 0;
-                padding-top: 13px;
-            }
-            .col-center{
-                margin:0 auto;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container-body">
-            <div class="container-fluid header">
+                }
+                .item-info-content{
+                    height: 160px;
+                    padding-top: 10px;
+                    font-size: 12px;
+                    color: #c5c5c5;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                }
+                .left-side .preview-item:hover .item img{
+                    box-shadow: 0 0 10px 2px white;
+                }
+                .left-side .item-border{
+                    border:1px solid slategrey;
+                }
+                .left-side .preview-item:hover .item-info{
+                    top:4%;
+                    opacity: 1;
+                }
+                .left-side .preview-item .item-info:hover{
+                    top:-99999px;
+                    opacity: 0;
+                }
+                /*=======*/
+                /*phan ben phai ten anime thu nho*/
+                .title-anime-right{
+                    margin:0;
+                    padding:0;
+                    font-size:14px;
+                    width: 150px; 
+                }
+                .title-anime-right p{
+                    color: chartreuse;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    margin:0;
+                }
+                .content-anime-right{
+                    margin:0;
+                    padding:0;
+                    font-size:12px;
+                    width: 150px;
+                }
+                .content-anime-right p{
+                    color: white;
+                    white-space: normal;
+                    overflow: visible;
+                    text-overflow: ellipsis;
+                    margin:0;
+                }
+                .right-container:hover .content-anime-right p{
+                    white-space: normal;
+                    margin:0;
+                }
+                .view-more{
+                    font-size: 12px;
+                    padding-top: 15px;
+                    float:right;
+                }
+                .title-container{
+                    margin-top:20px;
+                    margin-bottom: 15px;
+                    color: chartreuse;
+                    border-bottom: 1.5px solid chartreuse!important;
+                }
+                .title-tab-left{
+                    font-size: 24px;
+                    padding:0;
+                    margin:0;
+                }
+                .nav-tabs{
+                    margin-bottom: 15px;
+                    border:none;
+                }
+                /*background-color: chartreuse;*/
+                .nav-tabs>.active{
+                    border-bottom: 2.5px solid chartreuse!important;
+                }
+                .nav-tabs>li{
+                    border-bottom: 2.5px solid white;
+                    padding:0;
+                }
+                .title-fanpage-right{
+                    padding:0;
+                    width: auto;
+                    color: chartreuse;
+                    display: block;
+                    margin-left: 15px;
+                    margin-top: 10px;
+                    padding-bottom: 12px;
+                    margin-bottom: 10px;
+                    border-bottom: 2.5px solid chartreuse!important;
+                }
+                .left-title-anime{
+                    padding-bottom: 0;
+                    padding-top: 13px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container-body">
+                <div class="container-fluid header">
                 <jsp:include page="/templates/header.jsp"></jsp:include>
                 </div>
-                <div id="body-container" class="container">
+                <div id="body-container" class="container" >
                     <div class="row">
                         <div class="col-sm-8 left-side">
                             <ul class="nav nav-tabs">
@@ -351,8 +312,7 @@
                         <div class="row title-container ">
                             <span class="title-tab-left col-sm-10">ANIME DÀI TẬP</span><a href="#" class="view-more col-sm-2">Xem Thêm >></a>
                         </div>
-                        <!--<span class="title-container">ANIME DAI TAP</span> <a href="#" class="view-more col-sm-2">Xem Thêm >></a>-->
-                        <div class="row">
+                         <div class="row">
                             <%for (int j = 0; j < 4; j++) {
                             %>
                             <div  class="col-sm-3 preview-item">
@@ -388,7 +348,7 @@
                             <div class="col-sm-12 title-fanpage-right">Fanpage của website</div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-12 fb-page fb_iframe_widget" data-href="https://www.facebook.com/Anime-Online-2027409394253651" data-width="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="adapt_container_width=true&amp;app_id=448777685319550&amp;container_width=0&amp;hide_cover=false&amp;href=https%3A%2F%2Fwww.facebook.com%2FAni4u2%2F&amp;locale=vi_VN&amp;sdk=joey&amp;show_facepile=true&amp;small_header=false&amp;width=300"><span style="vertical-align: bottom; width: 300px; height: 196px;"><iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FAnime-Online-2027409394253651&tabs=timeline&width=330&height=200&small_header=false&adapt_container_width=false&hide_cover=false&show_facepile=true&appId" width="330" height="200" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe></span></div>
+                            <div class="col-sm-12 fb-page fb_iframe_widget" data-href="https://www.facebook.com/Anime-Online-2027409394253651" data-width="300" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" fb-xfbml-state="rendered" ><span style="vertical-align: bottom; width: 300px; height: 196px;"><iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2FAnime-Online-2027409394253651&tabs=timeline&width=330&height=200&small_header=false&adapt_container_width=false&hide_cover=false&show_facepile=true&appId" width="330" height="200" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe></span></div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12 title-fanpage-right">Anime được xem nhiều trong ngày</div>
@@ -436,15 +396,5 @@
                 </div>
             </div>
         </div>
-        <!--        <script type="text/javascript">
-                    $(document).ready(function () {
-                        $(function () {
-                            $(".img-responsive").lazyload({
-                                effect: "fadeIn",
-                                threshold : 50
-                            });
-                        });
-                    });
-                </script>-->
     </body>
 </html>

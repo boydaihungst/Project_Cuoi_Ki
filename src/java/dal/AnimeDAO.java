@@ -6,6 +6,7 @@
 package dal;
 
 import Utils.TimeUtils;
+import java.sql.CallableStatement;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Anime;
+import model.Gender;
 
 /**
  *
@@ -25,7 +27,82 @@ public class AnimeDAO extends BaseDAO<Anime> {
 
     @Override
     public Anime get(Anime model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Anime ani = null;
+        ArrayList<Gender> gender = new ArrayList<>();
+        ArrayList<String> wallpapers = new ArrayList<>();
+        int subscribers = 0;
+        try {
+            //get gender list of anime
+            connection.setAutoCommit(false);
+            String query_select_gender = "select c.CatName,c.CatID from CategorieDetails cd inner join Categories c on cd.CatID=c.CatID and cd.AniID=?";
+            PreparedStatement statement_select_gender = connection.prepareCall(query_select_gender);
+            statement_select_gender.setInt(1, model.getAniId());
+            ResultSet rs1 = statement_select_gender.executeQuery();
+            while (rs1.next()) {
+                gender.add(new Gender(rs1.getInt("CatID"), rs1.getString("CatName")));
+            }
+            //get wallpaper list of anime
+            String query_select_wallpaper = "SELECT "
+                    + "     [Link]\n"
+                    + "  FROM [Wallpaper]\n"
+                    + "  WHERE AniID = ?";
+            PreparedStatement statement_select_wallpaper = connection.prepareCall(query_select_wallpaper);
+            statement_select_wallpaper.setInt(1, model.getAniId());
+            ResultSet rs3 = statement_select_wallpaper.executeQuery();
+            while (rs3.next()) {
+                wallpapers.add(rs3.getString("Link"));
+            }
+            //get number of subscriber
+            String query_select_subscriber = "SELECT count(*) as subscriber\n"
+                    + "  FROM [Favorite] WHERE AniID =?";
+            PreparedStatement statement_select_subscriber = connection.prepareCall(query_select_subscriber);
+            statement_select_subscriber.setInt(1, model.getAniId());
+            ResultSet rs4 = statement_select_subscriber.executeQuery();
+
+            if (rs4.next()) {
+                subscribers = rs4.getInt("subscriber");
+            }
+            //get anime info
+            String query_select_anime = " SELECT a.[AniID]\n"
+                    + "      ,[AniName]\n"
+                    + "      ,[AniSeason]\n"
+                    + "      ,[ReleaseTime]\n"
+                    + "      ,[AniStatus]\n"
+                    + "      ,[EpsMax]\n"
+                    + "      ,[UpdateTime]\n"
+                    + "      ,[EpsReleased]\n"
+                    + "      ,[Desc]\n"
+                    + "      ,[Picture]\n"
+                    + "      ,[Trailer]\n"
+                    + "	  ,(select sum(TimeClicked) from WatchStatisticByDay where AniID=?) as 'totalwatch'\n"
+                    + "  FROM [Anime] a\n"
+                    + "  where a.AniID=?";
+            PreparedStatement statement_select_anime = connection.prepareCall(query_select_anime);
+            statement_select_anime.setInt(1, model.getAniId());
+            statement_select_anime.setInt(2, model.getAniId());
+            ResultSet rs2 = statement_select_anime.executeQuery();
+            if (rs2.next()) {
+                ani = new Anime();
+                ani.setAniId(rs2.getInt("AniID"));
+                ani.setAniName(rs2.getString("AniName"));
+                ani.setAniSeason(rs2.getInt("AniSeason"));
+                ani.setReleaseTime(rs2.getDate("ReleaseTime"));
+                ani.setAniStatus(rs2.getInt("AniStatus"));
+                ani.setEpsMax(rs2.getInt("EpsMax"));
+                ani.setUpdateTime(rs2.getDate("UpdateTime"));
+                ani.setEpsRel(rs2.getInt("EpsReleased"));
+                ani.setDesc(rs2.getString("Desc"));
+                ani.setPicture(rs2.getString("Picture"));
+                ani.setTrailer(rs2.getString("Trailer"));
+                ani.setTotalWatch(rs2.getInt("totalwatch"));
+                ani.setTotalSubscriber(subscribers);
+                ani.setWallpager(wallpapers);
+                ani.setGender(gender);
+            }
+        } catch (SQLException | IndexOutOfBoundsException ex) {
+            Logger.getLogger(AnimeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return ani;
     }
 
     @Override
@@ -180,7 +257,7 @@ public class AnimeDAO extends BaseDAO<Anime> {
     //top n anime moi cap nhat
     public ArrayList<Anime> get_top_n_ani_new_update(int top) {
         ArrayList<Anime> animes = new ArrayList<>();
-        String query="";
+        String query = "";
         try {
             if (top != 0) {//truong hop la tim theo top bao nhieu day
                 query = "SELECT TOP " + top + " [AniID]\n";
@@ -242,13 +319,13 @@ public class AnimeDAO extends BaseDAO<Anime> {
                 paramIndex++;
                 query += " AND [AniName] like ?\n";
                 Object[] objects = new Object[2];
-                objects[0] ="%"+ modal.getAniName()+"%";
+                objects[0] = "%" + modal.getAniName() + "%";
                 objects[1] = "String";
                 params.put(paramIndex, objects);
             }
             PreparedStatement statement = connection.prepareStatement(query);
             for (Map.Entry<Integer, Object[]> entry : params.entrySet()) {
-                
+
                 Integer key = entry.getKey();
                 Object[] value = entry.getValue();
                 if (value[1].toString().equals("int")) {
@@ -288,10 +365,10 @@ public class AnimeDAO extends BaseDAO<Anime> {
                     + "           ,[TimeClicked])\n"
                     + "     VALUES\n"
                     + "           (?,GETDATE(),1)\n"
-                    + "ELSE\n"
-                    + "UPDATE [WatchStatisticByDay]\n"
+                    + " ELSE\n"
+                    + " UPDATE [WatchStatisticByDay]\n"
                     + "   SET [TimeClicked] = (Select TimeClicked from WatchStatisticByDay WHERE AniID=? AND convert(date,[Date]) = convert(date, GETDATE())) +1\n"
-                    + " WHERE AniID =?";
+                    + " WHERE AniID =? AND convert(date,[Date]) = convert(date, GETDATE()) ";
             PreparedStatement statement = connection.prepareCall(sql);
             statement.setInt(1, aniId);
             statement.setInt(2, aniId);

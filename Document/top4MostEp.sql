@@ -94,6 +94,23 @@ UPDATE [WatchStatisticByDay]
    SET [TimeClicked] = (Select TimeClicked from WatchStatisticByDay WHERE AniID=? AND convert(date,[Date]) = convert(date, GETDATE())) +1
  WHERE AniID =?
  END
+ /*select preview 1 anime*/
+ --sai da fix lai trong code java
+ SELECT a.[AniID]
+      ,[AniName]
+      ,[AniSeason]
+      ,[ReleaseTime]
+      ,[AniStatus]
+      ,[EpsMax]
+      ,[UpdateTime]
+      ,[EpsReleased]
+      ,[Desc]
+      ,[Picture]
+	  ,(select sum(TimeClicked) from WatchStatisticByDay where AniID=3) as 'totalwatch'
+	  --,(select c.CatName from CategorieDetails cd inner join Categories c on cd.CatID=c.CatID and cd.AniID=3) as 'gender'
+  FROM [Anime] a
+  where a.AniID=3
+  
  --================================================
  /*Trigger khi add || update them ep + add them EP/source EP  + update table Anime -> thi dong thoi cap nhat lai UpdateTime trong table Anime*/
 

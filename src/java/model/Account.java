@@ -10,6 +10,7 @@ package model;
  * @author DrAgOn
  */
 public class Account {
+    private int Accid;
     private String username;
     private String password;
     private String email;
@@ -21,6 +22,14 @@ public class Account {
         this.username = username;
         this.password = password;
         this.email = email;
+    }
+
+    public int getAccid() {
+        return Accid;
+    }
+
+    public void setAccid(int Accid) {
+        this.Accid = Accid;
     }
 
     public String getUsername() {

@@ -48,7 +48,7 @@ public class reg extends HttpServlet {
         if (aDAO.getByUsername(new Account(username, password, email)) == null) {
             if (aDAO.getByEmail(new Account(username, password, email)) == null) {
                 if (aDAO.insert(a) != 0) {
-                    session.setAttribute("account", a);
+                    session.setAttribute("account", aDAO.get(a));
                     response.getWriter().print(true);
                     return;
                 }

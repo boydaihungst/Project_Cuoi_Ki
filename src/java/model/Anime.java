@@ -7,6 +7,7 @@ package model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 
 /**
  *
@@ -24,7 +25,52 @@ public class Anime implements Serializable{
     private int epsRel;
     private String desc;
     private String picture;
+    private int totalWatch;
+    private int totalSubscriber;
+    private ArrayList<Gender> gender= new ArrayList<>();
+    private ArrayList<String> wallpager = new ArrayList<>();
+    private String trailer = new String();
     public Anime() {
+    }
+
+    public int getTotalSubscriber() {
+        return totalSubscriber;
+    }
+
+    public void setTotalSubscriber(int totalSubscriber) {
+        this.totalSubscriber = totalSubscriber;
+    }
+
+    public int getTotalWatch() {
+        return totalWatch;
+    }
+
+    public void setTotalWatch(int totalWatch) {
+        this.totalWatch = totalWatch;
+    }
+
+    public ArrayList<String> getWallpager() {
+        return wallpager;
+    }
+
+    public void setWallpager(ArrayList<String> wallpager) {
+        this.wallpager = wallpager;
+    }
+
+    public String getTrailer() {
+        return trailer;
+    }
+
+    public void setTrailer(String trailer) {
+        this.trailer = trailer;
+    }
+
+    public ArrayList<Gender> getGender() {
+        return gender;
+    }
+
+    public void setGender(ArrayList<Gender> gender) {
+        this.gender = gender;
     }
 
     public String getPicture() {

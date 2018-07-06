@@ -72,13 +72,12 @@ public class Homepage extends HttpServlet {
         //
         ArrayList<Anime> anime_most_clicked = aniDAO.get_top_n_most_view_of_day(10);
         ArrayList<Anime> anime_most_ep = aniDAO.get_top_n_most_ep(4);
-        ArrayList<Categories> cats = catDAO.getAll();
+//        ArrayList<Categories> cats = catDAO.getAll();
 
         //send to jsp
         request.setAttribute("3_tabs_anime", anime_this_season_map);
         request.setAttribute("anime_most_ep", anime_most_ep);
         request.setAttribute("anime_most_clicked", anime_most_clicked);
-        request.setAttribute("cats", cats);
         request.getRequestDispatcher("view/homepage.jsp").forward(request, response);
     }
 

@@ -6,10 +6,12 @@
 package controller;
 
 import dal.AnimeDAO;
+import dal.CategoriesDAO;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -17,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import model.Categories;
 
 /**
  *
@@ -39,19 +42,13 @@ public class LinkFilter implements Filter {
             FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        String aniId = httpRequest.getParameter("aniid");
-        try {
-            if (aniId != null && aniId.trim().length() > 0) {
-                AnimeDAO aniDAO = new AnimeDAO();
-                aniDAO.clickAutoincrement(Integer.parseInt(aniId));
-            }
-        } catch (NumberFormatException e) {
-            log(e.getMessage());
-        }
-        //check login
-//        if(httpRequest.getSession(true).getAttribute("account")!=null){
-//            
-//        }
+        
+        
+        
+        CategoriesDAO catDAO = new CategoriesDAO();
+       
+        ArrayList<Categories> cats = catDAO.getAll();
+        request.setAttribute("cats", cats);
         chain.doFilter(request, response);
     }
 

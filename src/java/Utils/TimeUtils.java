@@ -39,7 +39,7 @@ public class TimeUtils {
         return cal;
     }
 
-    public String getSeasonYearName(Date _time) {
+    public static String getSeasonYearName(Date _time) {
         String s = "";
         Calendar time = toCalendar(_time);
         int month = time.get(Calendar.MONTH);
@@ -57,7 +57,7 @@ public class TimeUtils {
         return s;
     }
 
-    public String getStopTimeOfMonth(int _time) {
+    public static String getStopTimeOfMonth(int _time) {
         Calendar cal = Calendar.getInstance();
         int month = cal.get(Calendar.MONTH);
         String time = "";
@@ -109,7 +109,7 @@ public class TimeUtils {
         return time;
     }
 
-    public String getStartTimeOfMonth(int _month) {
+    public static String getStartTimeOfMonth(int _month) {
         Calendar cal = Calendar.getInstance();
         int month = cal.get(Calendar.MONTH);
         String time = "";

@@ -4,6 +4,18 @@
         <filter-name>LinkFilter</filter-name>
         <filter-class>controller.LinkFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>AnimeWatchFilter</filter-name>
+        <filter-class>controller.AnimeWatchFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AnimeWatchFilter</filter-name>
+        <servlet-name>AnimeView</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AnimeWatchFilter</filter-name>
+        <servlet-name>AnimeWatch</servlet-name>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>LinkFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -11,10 +23,6 @@
     <servlet>
         <servlet-name>Search</servlet-name>
         <servlet-class>controller.Search</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>ViewAnime</servlet-name>
-        <servlet-class>controller.anime.ViewAnime</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>auth</servlet-name>
@@ -28,13 +36,25 @@
         <servlet-name>reg</servlet-name>
         <servlet-class>controller.account.reg</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AnimeWatch</servlet-name>
+        <servlet-class>controller.anime.AnimeWatch</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AnimeView</servlet-name>
+        <servlet-class>controller.anime.AnimeView</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AnimeSubscribe</servlet-name>
+        <servlet-class>controller.anime.AnimeSubscribe</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AnimeErrReport</servlet-name>
+        <servlet-class>controller.anime.AnimeErrReport</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/tim-kiem</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ViewAnime</servlet-name>
-        <url-pattern>/anime/view</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>auth</servlet-name>
@@ -47,6 +67,22 @@
     <servlet-mapping>
         <servlet-name>reg</servlet-name>
         <url-pattern>/tai-khoan/reg</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AnimeWatch</servlet-name>
+        <url-pattern>/anime/watch</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AnimeView</servlet-name>
+        <url-pattern>/anime/view</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AnimeSubscribe</servlet-name>
+        <url-pattern>/anime/subscribe</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AnimeErrReport</servlet-name>
+        <url-pattern>/anime/report</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

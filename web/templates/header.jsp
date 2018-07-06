@@ -30,26 +30,44 @@
 
             /* Handle */
             ::-webkit-scrollbar-thumb {
-                background: #66ccff; 
+                background: springgreen; 
             }
 
             /* Handle on hover */
             ::-webkit-scrollbar-thumb:hover {
-                background:#66a3ff; 
+                background: chartreuse; 
             }
             body{
+                min-height: 100%;
                 background-color: black;
+                color: white;
+
             }
             a{
-                text-decoration: none;
+                text-decoration: none !important;
                 color:white;
+            }
+            a:active, a:focus,button:active,button:focus{
+                outline: none !important;
+            }
+            .container-body{
+                background: url('<%= request.getContextPath()%>/img/background.jpg') fixed no-repeat center !important;
+                margin: auto;
+                width: 100%;
+            }
+            .row{
+                margin: 0;
+                padding:0;
             }
             .container-body>.container-fluid,.container-body>.container{
                 display: flex;
                 justify-content: center;
                 background-color: black;
-                margin-bottom: 20px;
+                /*margin-bottom: 20px;*/
                 padding:0;
+            }
+            .header{
+                margin-bottom: 20px;
             }
             .navbar-brand{
                 padding:0;
@@ -123,7 +141,7 @@
             .navbar-container{
                 position: fixed;
                 background-color: black;
-                z-index: 200;
+                z-index: 2000;
                 width: 100%;
                 border-bottom: 1px chartreuse solid;  
                 display: flex;
@@ -149,7 +167,7 @@
 
             }
             .login-form>.btn-close{
-                background: url("img/close.png") no-repeat left center  !important;
+                background: url("<%= request.getContextPath()%>/img/close.png") no-repeat left center  !important;
                 width: 20px;
                 height: 20px;
                 position: absolute;
@@ -218,12 +236,41 @@
             .search-result-box .item-content{
                 padding-left:10px;
                 color: oldlace;
-                max-height: 100px;
+                max-height: 82px;
+                min-height: 82px;
                 overflow: hidden;
                 text-overflow:hidden;
             }
             .search-result-box .row-item-content{
                 overflow: hidden;
+            }
+            .img-icon{
+                width: 100%;
+                height: 100%;
+            }
+            .item-border-right{
+                position: relative;
+                width: 100px;
+                height: 100px;
+                overflow: hidden;
+            }
+            /*center big button videojs css*/
+            .vjs-default-skin .vjs-big-play-button {
+                height: 1.5em;
+                width: 1.5em;
+                border-radius: 50%;
+                left: 50%;
+                top: 50%;
+                margin-left: -0.75em;
+                margin-top: -0.75em;
+            }
+            .vjs-tech { object-fit: cover; }
+            .video-wrap-root{
+                padding:0;
+            }
+            .video-wrap{
+                width: 100%;
+                border: 1px solid darkslategrey;
             }
         </style>
     </head>
@@ -232,7 +279,7 @@
             <div class=" container" >
                 <button type="button" class="glyphicon glyphicon-th navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
                 </button>
-                <div class="navbar-brand"><a href="#"><img width="auto" height="53px" src="img/logo.png" alt="logo" />ANIME</a></div>
+                <div class="navbar-brand"><a href="<%= request.getContextPath()%>/homepage"><img width="auto" height="53px" src="<%= request.getContextPath()%>/img/logo.png" alt="logo" />ANIME</a></div>
                 <!--search form-->
                 <form class="navbar-form navbar-left search-form" action="">
                     <div class="search-result-box ">
@@ -269,7 +316,7 @@
                 <input name="password" type="password" placeholder="Mật khẩu"/>
                 <div id="respond">Sai tài khoản hoặc mật khẩu</div>
                 <button type="submit" class="btn btn-primary">Đăng nhập</button>
-                <button class="btn btn-primary ">Đăng kí</button>
+                <button type="button" class="btn btn-primary" onclick="$('#reg-btn').click()">Đăng kí</button>
             </form>
             <!--dang ki from-->
             <form class="text-center login-form" id="reg-form"  action="" onsubmit="return false;" method="post">
@@ -281,14 +328,14 @@
                 <input name="email" type="email" placeholder="Email"/>
                 <p id="respond2"></p>
                 <button type="submit" class="btn btn-primary ">Đăng kí</button>
-                <button class="btn btn-primary login-btn">Đăng nhập</button>
+                <button type="button" class="btn btn-primary "  onclick="$('#login-btn').click()">Đăng nhập</button>
 
             </form>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
                 <li >
-                    <a class="nav-title" href="#" >Trang chủ</a>
+                    <a class="nav-title" href="<%= request.getContextPath()%>/homepage" >Trang chủ</a>
                 </li>
                 <li class="dropdown">
                     <a class="dropdown-toggle nav-title" data-toggle="dropdown" href="#">Anime theo năm
@@ -325,8 +372,22 @@
         </div>
 
         <script>
-            //show/close login form
             $(document).ready(function () {
+                //slider
+                $(".owl-carousel").owlCarousel({
+                    lazyLoad: true,
+                    lazyLoadEager: 1,
+                    loop: true,
+                    margin: 0,
+                    autoplay: true,
+                    autoplayTimeout: 3000,
+                    autoplayHoverPause: true,
+                    nav: false,
+                    dots: false,
+                    items: 1,
+                    center: true,
+                    autoHeight: false
+                });
                 //login
                 $("#login-form>.btn-close").click(function () {
                     show_login_box();
@@ -343,9 +404,6 @@
                 $("#login-form").submit(function () {
                     login();
                 });
-                $("#login-form>.login-btn").click(function () {
-                    login();
-                });
                 //reg
                 $("#reg-form>.btn-close").click(function () {
                     show_reg_box();
@@ -359,16 +417,14 @@
                 $("#reg-form").submit(function () {
                     reg();
                 });
-                $("#reg-form>.login-btn").click(function () {
-                    reg();
-                });
                 //hide search box khi ma click out
                 $(document.body).click(function (e) {
                     var $box = $('#search-input');
                     if (e.target.id !== 'search-input' && !$.contains($box[0], e.target))
-                         $(".search-result-box").hide();
+                        $(".search-result-box").hide();
                 });
             });
+            //main funtion
             function show_login_box() {
                 if ($('#body-container').css('opacity') !== 1) {
                     $('#body-container').css('opacity', '1');
@@ -378,6 +434,7 @@
                 if ($('#reg-form').css('display') !== 'none') {
                     $("#reg-form").toggle("fast");
                 }
+                $("#login-form>#respond").hide();
                 $("#login-form").toggle("fast");
             }
             ;
@@ -390,6 +447,7 @@
                 if ($('#login-form').css('display') !== 'none') {
                     $("#login-form").toggle("fast");
                 }
+                $("#reg-form>#respond2").hide();
                 $("#reg-form").toggle("fast");
             }
             ;
@@ -416,10 +474,10 @@
                         var i;
                         for (i in obj) {
                             console.log(obj[i]);
-                            $(".search-result-box").append('<a class=" search-item"  href="#">' +
+                            $(".search-result-box").append('<a class=" search-item"  href="<%= request.getContextPath()%>/anime/view?aniid=' + obj[i].aniId + '">' +
                                     '<div class="col-sm-4 item-icon">' +
                                     ' <div class="item-border-right item">' +
-                                    '<img class="img-responsive img-icon img-icon-left"  src="' + obj[i].picture + '" alt="icon-item"/>' +
+                                    '<img class="img-responsive img-icon img-icon-left"  src="<%= request.getContextPath()%>/' + obj[i].picture + '" alt="icon-item"/>' +
                                     ' </div>' +
                                     '</div>' +
                                     '<div class="col-sm-8 ">' +
@@ -440,7 +498,6 @@
                 xhttp.send();
             }
             ;
-
             function login() {
                 var un, pw;
                 un = document.getElementsByName('username')[0].value;
@@ -464,7 +521,6 @@
                 xhttp.send("username=" + un + "&password=" + pw);
             }
             ;
-
             function logout() {
                 var xhttp;
                 xhttp = new XMLHttpRequest();

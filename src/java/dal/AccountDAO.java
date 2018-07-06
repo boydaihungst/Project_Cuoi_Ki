@@ -28,6 +28,7 @@ public class AccountDAO extends BaseDAO<Account> {
                     + "      ,[Username]\n"
                     + "      ,[Password]\n"
                     + "      ,[Email]\n"
+                    + "      ,[AccID]\n"
                     + "  FROM [Account]\n"
                     + "  WHERE [Username] =? AND [Password]=? ";
             PreparedStatement statement = connection.prepareCall(query);
@@ -38,6 +39,7 @@ public class AccountDAO extends BaseDAO<Account> {
                 acc = new Account();
                 acc.setUsername(rs.getString("Username"));
                 acc.setEmail(rs.getString("Email"));
+                acc.setAccid(rs.getInt("AccID"));
             }
         } catch (SQLException ex) {
             Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);
