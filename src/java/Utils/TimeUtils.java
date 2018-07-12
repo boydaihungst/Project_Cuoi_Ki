@@ -19,10 +19,14 @@ import java.util.logging.Logger;
  */
 public class TimeUtils {
 
-    public static final String SPRING = "XUÂN";
-    public static final String SUMMER = "HÈ";
-    public static final String AUTUMN = "THU";
-    public static final String WINTER = "ĐÔNG";
+//    public static final String SPRING = "XUÂN";
+//    public static final String SUMMER = "HÈ";
+//    public static final String AUTUMN = "THU";
+//    public static final String WINTER = "ĐÔNG";
+    public static final String SPRING = "SPRING";
+    public static final String SUMMER = "SUMMER";
+    public static final String AUTUMN = "AUTUMN";
+    public static final String WINTER = "WINTER";
     public static final int CURRENT_SEASON = 4;
     public static final int PRE_SEASON = 5;
     public static final int PRE_2_SEASON = 6;
@@ -33,31 +37,71 @@ public class TimeUtils {
     public TimeUtils() {
     }
 
+    public static String seasonEngtoVn(String season) {
+        return season.replaceFirst(SPRING, "Xuân")
+                .replaceFirst(SUMMER, "Hè")
+                .replaceFirst(AUTUMN, "Thu")
+                .replaceFirst(WINTER, "Đông");
+    }
+
     public static Calendar toCalendar(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal;
     }
-
-    public static String getSeasonYearName(Date _time) {
+    public static String convertSeasonYearToStartDate(String season,int year){
+        switch(season.toUpperCase()){
+            case SPRING :{
+                return year+"-01-01";
+            }
+            case SUMMER:{
+                return year+"-04-01";
+            }
+            case AUTUMN:{
+                return year+"-07-01";
+            }
+            case WINTER:{
+                return year+"-10-01";
+            }
+            default: return "";
+        }
+    }
+    public static String convertSeasonYearToStopDate(String season,int year){
+        switch(season.toUpperCase()){
+            case SPRING:{
+                return year+"-03-31";
+            }
+            case SUMMER:{
+                return year+"-06-30";
+            }
+            case AUTUMN:{
+                return year+"-09-30";
+            }
+            case WINTER:{
+                return year+"-12-31";
+            }
+            default: return "";
+        }
+    }
+    public static String getSeasonYearByDate(Date _time) {
         String s = "";
         Calendar time = toCalendar(_time);
         int month = time.get(Calendar.MONTH);
         int year = time.get(Calendar.YEAR);
         if (month >= 0 && month <= 2) {
-            s += SPRING ;
+            s += SPRING;
         } else if (month >= 3 && month <= 5) {
-           s += SUMMER ;
+            s += SUMMER;
         } else if (month >= 6 && month <= 8) {
-            s += AUTUMN ;
+            s += AUTUMN;
         } else if (month >= 9 && month <= 11) {
-            s += WINTER ;
+            s += WINTER;
         }
-        s+=" "+year;
+        s += " " + year;
         return s;
     }
 
-    public static String getStopTimeOfMonth(int _time) {
+    public static String getStopTimeOfSeason(int _time) {
         Calendar cal = Calendar.getInstance();
         int month = cal.get(Calendar.MONTH);
         String time = "";
@@ -109,7 +153,7 @@ public class TimeUtils {
         return time;
     }
 
-    public static String getStartTimeOfMonth(int _month) {
+    public static String getStartTimeOfSeason(int _month) {
         Calendar cal = Calendar.getInstance();
         int month = cal.get(Calendar.MONTH);
         String time = "";

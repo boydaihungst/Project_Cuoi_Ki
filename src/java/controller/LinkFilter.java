@@ -6,7 +6,7 @@
 package controller;
 
 import dal.AnimeDAO;
-import dal.CategoriesDAO;
+import dal.GenderDAO;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -19,7 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import model.Categories;
+import model.Gender;
 
 /**
  *
@@ -45,10 +45,10 @@ public class LinkFilter implements Filter {
         
         
         
-        CategoriesDAO catDAO = new CategoriesDAO();
-       
-        ArrayList<Categories> cats = catDAO.getAll();
+        GenderDAO catDAO = new GenderDAO();
+        ArrayList<Gender> cats = catDAO.getAll();
         request.setAttribute("cats", cats);
+//        System.out.println(httpRequest.getServletPath());
         chain.doFilter(request, response);
     }
 

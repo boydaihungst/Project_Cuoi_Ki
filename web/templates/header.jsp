@@ -5,7 +5,7 @@
 --%>
 
 <%@page import="model.Account"%>
-<%@page import="model.Categories"%>
+<%@page import="model.Gender"%>
 <%@page import="java.util.ArrayList"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -13,9 +13,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%
-            ArrayList<Categories> cats = (ArrayList<Categories>) request.getAttribute("cats");
+            ArrayList<Gender> cats = (ArrayList<Gender>) request.getAttribute("cats");
 
             Account account = (Account) session.getAttribute("account");
+            
+           String[] alphabet ={"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
         %>
         <style>
             /* width */
@@ -47,7 +49,7 @@
                 text-decoration: none !important;
                 color:white;
             }
-            a:active, a:focus,button:active,button:focus{
+            a:hover, a:focus,button:active,button:focus{
                 outline: none !important;
             }
             .container-body{
@@ -55,24 +57,33 @@
                 margin: auto;
                 width: 100%;
             }
+            .top-row{
+                    min-height: 1080px
+                }
             .row{
                 margin: 0;
                 padding:0;
             }
+            .container-body>.container-fluid{
+
+            }
             .container-body>.container-fluid,.container-body>.container{
                 display: flex;
-                justify-content: center;
+                justify-content: center; 
                 background-color: black;
                 /*margin-bottom: 20px;*/
                 padding:0;
             }
             .header{
                 margin-bottom: 20px;
+                z-index:1500;
             }
             .navbar-brand{
                 padding:0;
             }
             .anime-type-drop-box{
+                border:1px solid springgreen;
+                border-top:none;
                 min-width:600px;
             }
             .anime-type-drop-box .col-sm-3{
@@ -106,6 +117,11 @@
             .dropdown-menu{
                 background-color: black !important;
                 opacity: 0.95;
+            }
+            .dropdown:hover>.dropdown-menu
+            ,.dropdown:focus>.dropdown-menu{
+                display: block;
+                /*margin-top: 0;*/
             }
             .navbar-toggle{
                 font-size: 20px;
@@ -157,7 +173,7 @@
             .login-form{
                 display:none;
                 border: 1px chartreuse solid; 
-                z-index:10;
+                z-index:1003;
                 position: fixed;
                 top:200px;
                 padding: 15px 25px 25px;
@@ -173,7 +189,7 @@
                 position: absolute;
                 top:-10px;
                 right: -10px;
-                z-index:9999;
+                z-index:3000;
             }
             .login-form input{
                 padding:15px ;
@@ -272,6 +288,29 @@
                 width: 100%;
                 border: 1px solid darkslategrey;
             }
+            .overlay{
+                display:none;
+                position: fixed;
+                top: 0; 
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0,0,0,0.8);
+                z-index:99;
+                width: 100%;
+                height: 100%;
+            }
+            .overflow-ellipsis{
+                height: 100%;
+                position: absolute;
+            }
+            .overflow-ellipsis p{
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                /*                    line-height: normal;*/
+            }
         </style>
     </head>
     <body>
@@ -338,41 +377,56 @@
                     <a class="nav-title" href="<%= request.getContextPath()%>/homepage" >Trang chủ</a>
                 </li>
                 <li class="dropdown">
-                    <a class="dropdown-toggle nav-title" data-toggle="dropdown" href="#">Anime theo năm
+                    <a class="dropdown-toggle nav-title" href="<%= request.getContextPath() %>/Filter?">Anime theo năm
                     </a>
                     <ul class="dropdown-menu anime-type-drop-box">
                         <li>
                             <div class="row">
                                 <% for (int i = 2010; i < 2019; i++) {%>
-                                <a class="col-sm-3" href="#">Năm <%=i%></a>
+                                <a class="col-sm-3" href="<%= request.getContextPath() %>/Filter?year=<%= i %>">Năm <%=i%></a>
                                 <%}
                                 %>
                         </li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a class="dropdown-toggle nav-title" data-toggle="dropdown" href="#">Thể loại
-                    </a>
+                    <a class="dropdown-toggle nav-title" href="<%= request.getContextPath() %>/Filter?">Thể loại</a>
                     <ul class="dropdown-menu anime-type-drop-box">
                         <li>
                             <div class="row">
                                 <% for (int i = 0; i < cats.size(); i++) {%>
-                                <a class="col-sm-3" href="#"><span class="glyphicon glyphicon-triangle-right"></span><span><%= cats.get(i).getCatName()%></span></a>
+                                <a class="col-sm-3" href="<%= request.getContextPath() %>/Filter?gender=<%=cats.get(i).getCatId()%>"><span class="glyphicon glyphicon-triangle-right"></span><span><%= cats.get(i).getCatName()%></span></a>
                                         <%}
                                         %>
                             </div>
                         </li>
                     </ul>
                 </li>
-                <li><a href="#">Anime Blu-ray</a></li>
-                <li><a href="#">Danh sách anime</a></li>
-                <li><a href="#">Anime mới cập nhật</a></li>
+                <li><a href="<%= request.getContextPath() %>/Filter?type=1">Anime Blu-ray</a></li>
+                <li class="dropdown"><a href="<%= request.getContextPath()%>/anime-collection?filter=alphabet">Danh sách anime</a>
+                    <ul class="dropdown-menu anime-type-drop-box">
+                        <li>
+                            <div class="row">
+                                <% for (int i = 0; i < alphabet.length; i++) {%>
+                                <a class="col-sm-3" href="<%= request.getContextPath()%>/anime-collection?filter=alphabet&keyword=<%= alphabet[i] %>"><span class="glyphicon glyphicon-triangle-right"></span><span><%= alphabet[i]%></span></a>
+                                        <%}
+                                        %>
+                            </div>
+                        </li>
+                    </ul></li>
+                <li><a href="<%= request.getContextPath()%>/anime-collection?filter=update-recent">Anime mới cập nhật</a></li>
                 <li><a href="#">Lịch Chiếu anime</a></li>
             </ul>
         </div>
 
         <script>
             $(document).ready(function () {
+
+                //overflow-multiline-ellipsis
+                lineclamp();
+                $(window).resize(function () {
+                    lineclamp();
+                });
                 //slider
                 $(".owl-carousel").owlCarousel({
                     lazyLoad: true,
@@ -391,6 +445,7 @@
                 //login
                 $("#login-form>.btn-close").click(function () {
                     show_login_box();
+//                    $('.overlay').hide();
                 });
                 $("#login-btn").click(function () {
                     show_login_box();
@@ -407,6 +462,7 @@
                 //reg
                 $("#reg-form>.btn-close").click(function () {
                     show_reg_box();
+//                    $('.overlay').hide();
                 });
                 $("#reg-btn").click(function () {
                     show_reg_box();
@@ -426,29 +482,38 @@
             });
             //main funtion
             function show_login_box() {
-                if ($('#body-container').css('opacity') !== 1) {
-                    $('#body-container').css('opacity', '1');
-                } else {
-                    $('#body-container').css('opacity', '0.1');
-                }
                 if ($('#reg-form').css('display') !== 'none') {
                     $("#reg-form").toggle("fast");
                 }
+                $('.overlay').show();
                 $("#login-form>#respond").hide();
-                $("#login-form").toggle("fast");
+                $("#login-form").toggle("fast", function () {
+                    if ($('#reg-form').css('display') == 'none' && $('#login-form').css('display') == 'none') {
+                        $('.overlay').hide();
+                        //show khi ma nut tat den dang bat o trang xem video
+                        if ($('#light-btn').length != 0 && $('#light-btn').css('zIndex') != 'auto') {
+                            $('.overlay').show();
+                        }
+                    }
+                });
             }
             ;
             function show_reg_box() {
-                if ($('#body-container').css('opacity') !== 1) {
-                    $('#body-container').css('opacity', '1');
-                } else {
-                    $('#body-container').css('opacity', '0.1');
-                }
                 if ($('#login-form').css('display') !== 'none') {
                     $("#login-form").toggle("fast");
                 }
+                $('.overlay').show();
                 $("#reg-form>#respond2").hide();
-                $("#reg-form").toggle("fast");
+                $("#reg-form").toggle("fast", function () {
+                    if ($('#reg-form').css('display') == 'none' && $('#login-form').css('display') == 'none') {
+                        $('.overlay').hide();
+                        //show khi ma nut tat den dang bat o trang xem video
+                        if ($('#light-btn').length != 0 && $('#light-btn').css('zIndex') != 'auto') {
+                            $('.overlay').show();
+                        }
+                    }
+                });
+
             }
             ;
             //search = ajax
@@ -502,6 +567,7 @@
                 var un, pw;
                 un = document.getElementsByName('username')[0].value;
                 pw = document.getElementsByName('password')[0].value;
+
                 var xhttp;
                 xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
@@ -558,6 +624,16 @@
                 xhttp.send("username=" + un + "&password=" + pw + "&password2=" + pw2 + "&email=" + em);
             }
             ;
+            //overflow-multiline-ellipsis
+            function lineclamp() {
+                $('.overflow-ellipsis').each(function (index) {
+                    var p = $(this).children('p');
+                    var lineheight = parseFloat(p.css('line-height'));
+                    var parentheight = $(this).height();
+                    var calc = parseInt(parentheight / lineheight);
+                    p.css({"-webkit-line-clamp": "" + calc + ""});
+                });
+            }
         </script> 
     </body>
 </html>

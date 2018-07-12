@@ -1,3 +1,4 @@
+<%@page import="model.Account"%>
 <%@page import="model.Anime"%>
 <%@page import="model.Episode"%>
 <%@page import="java.util.Map"%>
@@ -9,12 +10,24 @@
 <html>
     <head>
         <%
+            int epNum = 0;
+            int epSrc = 0;
+            try {
+                epNum = Integer.parseInt(request.getParameter("epnum"));
+            } catch (NumberFormatException e) {
+                epNum = 1;//default ep number
+            }
+            try {
+                epSrc = Integer.parseInt(request.getParameter("epsrc"));
+            } catch (NumberFormatException e) {
+            }
+            Account account = (Account) session.getAttribute("account");
             Anime a = (Anime) request.getAttribute("anime");
             Map<String, ArrayList<Episode>> allEpBySrc
                     = (Map<String, ArrayList<Episode>>) request.getAttribute("list_ep_by_src");
         %>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Ten anime</title>
+        <title><%= a.getAniName()%> - xem phim</title>
         <jsp:include page="/templates/libs.jsp"></jsp:include>
             <style>
                 .ep-btn{
@@ -62,15 +75,39 @@
                 .list-group,.notification-wrap{
                     background-color: #171717 !important;
                 }
+                .list-group a:hover{
+                    cursor: pointer;    
+                }
                 .notification-wrap h5{
                     padding-top: 10px;
                     color:#ff9900
                 }
+                .video-wrap,#light-btn{
+                    position: relative;
+                    /*z-index:1002;*/
+                }
+                .popover-content{
+                    color:springgreen !important;
+                    background: #171717 !important;
+                    border-color: springgreen !important;
+                    border-radius:inherit;
+                }
+                .popover.top>.arrow:after{
+                    border-top-color: springgreen !important;
+                }
+                .popover{
+                    white-space: pre-wrap;
+                    padding:0;
+                    border:1px solid springgreen;
+                    border-radius: 20px !important
+                }
             </style>
         </head>
         <body>
+            <!--facebook comment -->
             <div id="fb-root"></div>
-            <script>(function (d, s, id) {
+            <script>
+                $(document).ready(function (d, s, id) {
                     var js, fjs = d.getElementsByTagName(s)[0];
                     if (d.getElementById(id))
                         return;
@@ -80,6 +117,7 @@
                     fjs.parentNode.insertBefore(js, fjs);
                 }(document, 'script', 'facebook-jssdk'));</script>
             <div class="container-body">
+                <div class="overlay"></div>
                 <div class="container-fluid header">
                 <jsp:include page="/templates/header.jsp"></jsp:include>
                 </div>
@@ -87,43 +125,96 @@
                     <!--titile-->
                     <div class="col-sm-12 text-center">
                         <h2 class="title-anime">
-                        <%= a.getAniName()%>
+                            <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= a.getAniId()%>"><%= a.getAniName()%></a>
                     </h2>
                 </div>
                 <!--video player-->
                 <div class="row">
                     <div class="col-sm-12 video-wrap-root">
-                        <div id="trailer" class="video-wrap">
-                            <video id="video" class="video-js vjs-default-skin" data-setup='{"controls": true, "autoplay": true, "preload": "auto","fluid":true}' >
+                        <div id="player" class="video-wrap">
+                            <video id="video" class="video-js vjs-default-skin" data-setup='{"controls": true,"preload": "auto", "autoplay": true, "fluid":true}'>
                             </video>
                         </div>
                     </div>
                 </div>
+                <script src="https://vjs.zencdn.net/7.0.3/video.js"></script>
+                <script src="<%= request.getContextPath()%>/js/videojs-resolution-switcher.js"></script>
+                <script src="<%= request.getContextPath()%>/js/Youtube.min.js"></script>
+                <script>
+                //danh sach preload
+                var preload = [];
+                //danh sach full tap + src
+                var list_ep = [];
+                //lock khi có source load thành công + không bị lỗi
+                var loaded = false;
+                var currentEpNum = <%= epNum%>;
+                var currentSrc = <%= epSrc <= 0 ? null : epSrc%>;
+                var currentAniId = <%= a.getAniId()%>;
+                //load tap + source da xem lan cuoi 
+                if (typeof (Storage) !== "undefined") {
+                    var last_click_ep = localStorage.getItem("last_click_ep" + currentAniId);
+                    var last_click_src = localStorage.getItem("last_click_src" + currentAniId);
+                    //set tap + source da xem lan cuoi khi load trang
+                    window.onbeforeunload = function (e) {
+                        localStorage.setItem("last_click_ep" + currentAniId, currentEpNum);
+                        localStorage.setItem("last_click_src" + currentAniId, currentSrc);
+                    };
+                    if (!window.location.search.includes("epnum")) {    //change tập hiện tại + src hiện tại để preload tự động load đúng tập + src
+                        if (last_click_ep != null) {    //khi chỉ có số tập
+                            currentEpNum = last_click_ep;
+                            if (last_click_src != null) {   //khi có cả số tập và source id
+                                currentSrc = last_click_src;
+                            }
+                        }
+                    }
+                }
+                //change ep 
+                //epNum (int): số tập
+                //srcId (int): source id
+                //aniId (int): anime id
+                function changeEp(epNum, srcId, aniId) {
+                    currentEpNum = epNum;
+                    currentSrc = srcId;
+                    window.location.href = "<%= request.getContextPath()%>/anime/watch?aniid=<%= a.getAniId()%>&epnum=" + epNum + "&epsrc=" + srcId;
+                }
+                ;
+                var player = videojs('video', {
+                    controls: true,
+                    preload: 'auto',
+                    autoplay: true,
+                    plugins: {
+                        videoJsResolutionSwitcher: {
+                            default: 'high',
+                            dynamicLabel: true
+                        }
+                    }
+                });
+                </script>
                 <!--external controller-->
                 <div class="row">
                     <div class="col-sm-12 external-control-wrap ">
                         <div class="list-group">
-                            <a href="#" class="list-group-item btn-danger text-center">
+                            <a id="report-btn" class="list-group-item btn-danger text-center" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="">
                                 <i class="fa fa-exclamation-triangle"></i>
-                                <span>Báo lỗi</span>
+                                <span >Báo lỗi</span>
                             </a>
-                            <a href="#" class="list-group-item btn-info text-center">
+                            <a id="prev-btn" class="list-group-item text-center" >
                                 <i class="fa fa-mail-reply"></i>
                                 <span>Tập trước</span>
                             </a>
-                            <a href="#" class="list-group-item btn-success text-center">
+                            <a id="reload-btn" class="list-group-item text-center" >
                                 <i class="fa fa-refresh"></i>
                                 <span>Reload</span>
                             </a>
-                            <a href="#" class=" list-group-item btn-info text-center">
+                            <a id="next-btn" class=" list-group-item text-center" >
                                 <i class="fa fa-mail-forward"></i>
                                 <span>Tập sau</span>
                             </a>
-                            <a href="#" class="list-group-item btn-info text-center">
+                            <a id="light-btn" class="list-group-item text-center" >
                                 <i class="fa fa-lightbulb-o"></i>
                                 <span>Tắt đèn</span>
                             </a>
-                            <a href="#" class="list-group-item btn-info text-center">
+                            <a class="list-group-item text-center">
                                 <i class="fa fa-star-o"></i>
                                 <span>Theo dõi</span>
                             </a>
@@ -149,14 +240,35 @@
                     <% for (Map.Entry<String, ArrayList<Episode>> ep : allEpBySrc.entrySet()) {
                             String key = ep.getKey();
                             ArrayList<Episode> eps = ep.getValue();
+
                     %>
                     <!--title-->
                     <div class="col-sm-10 col-md-offset-1">
                         <h5 class="sever-title">Server <%= key%></h5>
                         <!--ep list-->
                         <div class="row ep-list-wrap ">
-                            <% for (Episode e : eps) {%>
-                            <a href="<%= e.getUrl()%>" class="ep-btn"><%= e.getEpNumber()%></a>
+                            <% for (Episode e : eps) {
+                                    //thêm field cho preload 
+                                    if (e.getEpNumber() == epNum) {%>
+                            <script>
+                                preload.push({
+                                    epNum: <%= e.getEpNumber()%>,
+                                    srcId: <%= e.getSourceId()%>,
+                                    aniId: <%= e.getAniId()%>
+                                });
+                            </script>
+                            <% }%>
+                            <script>
+                                // add full playlist
+                                list_ep.push({
+                                    epNum: <%= e.getEpNumber()%>,
+                                    srcId: <%= e.getSourceId()%>,
+                                    aniId: <%= e.getAniId()%>
+                                });
+                            </script>
+                            <a href="#player" class="ep-btn"  onclick="setTimeout(function () {
+                                        changeEp(<%= e.getEpNumber()%>,<%= e.getSourceId()%>, <%= e.getAniId()%>);
+                                    }, 800)"><%= e.getEpNumber()%></a>
                             <%}%>
                         </div>
                     </div>
@@ -164,68 +276,233 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-10 col-md-offset-1">
-                        <div class="fb-comments" data-href="http://localhost:8080/Project_Cuoi_Ki/anime/watch?aniid=3" data-colorscheme="dark" data-width="100%" data-numposts="10"></div>
+                        <div class="fb-comments" data-href="http://localhost:8080<%= request.getContextPath()%>/anime/watch?aniid=<%= a.getAniId()%>" order_by="time" colorscheme="dark" data-width="100%" data-numposts="5"></div>
                     </div>
                 </div>
             </div>
-            <script src="https://vjs.zencdn.net/7.0.3/video.js"></script>
-            <script src="<%= request.getContextPath()%>/js/videojs-resolution-switcher.js"></script>
-            <script src="<%= request.getContextPath()%>/js/Youtube.min.js"></script>
-            <script>
-                            //            player.updateSrc([
-                            //                {
-                            //                    src: 'https://www.sample-videos.com/video/mp4/720/big_buck_bunny_720p_30mb.mp4',
-                            //                    type: 'video/mp4',
-                            //                    label: '720'
-                            //                },
-                            //                {
-                            //                    src: 'https://www.sample-videos.com/video/mp4/480/big_buck_bunny_480p_30mb.mp4',
-                            //                    type: 'video/mp4',
-                            //                    label: '480'
-                            //                }
-                            //            ]);
-            </script>
-            <script>
-                var player = videojs('video', {
-                    controls: true,
-                    plugins: {
-                        videoJsResolutionSwitcher: {
-                            default: 'high',
-                            dynamicLabel: true
+            <div class="container-fluid footer">
+                <jsp:include page="/templates/footer.jsp"></jsp:include>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+        <% if (account != null) { %>
+                $('#report-btn').popover({content: 'Nhấn vào đây để báo lỗi', animation: true});
+                $("#report-btn").click(function () {
+                    send_report();
+                });
+        <%} else {%>
+                $('#report-btn').popover({content: 'Bạn phải đăng nhập để báo lỗi', animation: true});
+        <%}%>
+
+                //setting function button
+                $('#prev-btn').click(function () {
+                    prev();
+                });
+                $('#next-btn').click(function () {
+                    next();
+                });
+                $('#reload-btn').click(function () {
+                    reload();
+                });
+                $('#light-btn').click(function () {
+                    lightoff();
+                });
+                //setting video player
+                player.on('dblclick', function () {
+                    if (player.isFullscreen()) {
+                        player.exitFullscreen();
+                        console.log("exit fullscreen");
+                    } else {
+                        player.requestFullscreen();
+                        console.log("fullscreen");
+                    }
+                });
+                var ct; //int current time của video player khi bị dính error
+                var count = 0;  //dùng đếm số lượng src đã get direct link
+                var notFound404;    //vòng lặp để check 404
+                var needLoadLeng = 0;
+                if (<%=request.getParameter("epsrc")%> == null && currentSrc == null) { //preload xem server nào ngon nhất ->load trong tat ca cac sourceID
+                    for (var i in preload) {
+                        needLoadLeng = preload.length;
+                        console.log(i);
+                        if (loaded == false) {
+                            preloadSrc(false, preload[i].epNum, preload[i].srcId, preload[i].aniId);
                         }
                     }
-                });
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.onreadystatechange = function () {
-                    if (this.readyState === 4 && this.status === 200) {
-                        var json = JSON.parse(this.responseText.replace("\/", "/"));
-                        json = json.sources[0];
-                        var directLink = json.file;
-                        console.log(directLink);
-                        var type = json.type;
-                        //                        $("#video").append('<source src="' + directLink + '" type="video/' + type + '" label="HD" res="720" />');
-                        player.updateSrc([
-                            {
-                                src: '<%= request.getContextPath()%>/img/demo.mp4',
-                                type: 'video/mp4',
-                                label: '720'
-                            }
-                        ]);
+                } else {
+                    for (var i in preload) {
+                        if (preload[i].srcId == currentSrc) {  //preload xem server nào ngon nhất ->load trong tat ca cac sourceID//bo loaded == false vi chi load den 1 link
+                            needLoadLeng++;
+                            preloadSrc(true, preload[i].epNum, preload[i].srcId, preload[i].aniId);
+                        }
                     }
-                };
-                xmlhttp.open("GET", "https://api.123share.top/getlink/?link=" + 'https://www.youtube.com/watch?v=JGwWNGJdvx8', true);
-                xmlhttp.setRequestHeader('Content-Type', 'application/json');
-                xmlhttp.send();
-            </script>
-            <script>
-                videojs('video').on('dblclick', function () {
-                    if (videojs('video').isFullscreen()) {
-                        videojs('video').exitFullscreen();
-                    } else {
-                        videojs('video').requestFullscreen();
+                }
+                notFound404 = setInterval(function () {
+                    if (loaded == false && player.readyState() == 0 && count == needLoadLeng) {
+                        player.error({code: 404}); // throw exception khi k co tap nao load
+                        clearInterval(notFound404);
                     }
-                });
-            </script>
+                }, 2000);
+                //error handler
+                player.on("error", function (e) {
+                    //==0 khi k load duoc bat ki src nao, code == 2 là khi connect internet mất thì k reload lại src hiện tại
+                    if (player.readyState() != 0 && player.error().code === 2) {
+                        return;
+                    }
+                    //play error video kho lỗi 404 -> mình tự thêm mã 404
+                    if (player.readyState() == 0 && player.error().code === 404) {
+                        player.updateSrc([{src: "<%= request.getContextPath()%>/img/error-video.mp4",
+                                type: "video/mp4",
+                                label: ""}]);
+                        player.play();
 
-    </body>
+                    } else {    //khi lỗi decode thì sẽ load lại src và cho play lại + pass 1 giây để tránh lỗi
+                        player.error(null);
+                        ct = player.currentTime();
+                        player.updateSrc([{src: player.currentSrc(),
+                                type: "video/mp4",
+                                label: ""}]);
+                        player.play();
+                    }
+                });
+                //khi mà lỗi bị vấp video thì sẽ reload và pass 1 giây để tránh lỗi
+                player.on('play', function () {
+                    clearInterval(notFound404);
+                    if (ct > 0) {
+                        player.currentTime(ct + 1);
+                    }
+                    ct = 0;
+                });
+                function send_report() {
+                    $.ajax({
+                        type: "GET",
+                        url: "<%= request.getContextPath()%>/anime/report",
+                        data: {epnum: currentEpNum, srcid: currentSrc, aniid: currentAniId},
+                        success: function (response) {
+                            $('#report-btn').data('bs.popover').options.content = "Bạn đã báo cáo thành công";
+                            $(".popover-content").html('Bạn đã báo cáo thành công');
+                            console.log("report sent ok");
+                        }
+                    });
+                }
+                ;
+                function reload() {
+                    window.location.reload();
+                }
+                ;
+
+                function prev() {
+                    var isThere = list_ep.some(function (obj) {
+                        return obj.epNum == currentEpNum - 1 && obj.srcId == currentSrc && obj.aniId == currentAniId;
+                    });
+                    if (!isThere) {
+                        console.log({epNum: currentEpNum - 1, srcId: currentSrc, aniId: currentAniId});
+                        alert("Không có tập trước");
+                        return;
+                    } else {
+                        changeEp(currentEpNum - 1, currentSrc, currentAniId);
+                    }
+                }
+                ;
+                function next() {
+                    var isThere = list_ep.some(function (obj) {
+                        return obj.epNum == currentEpNum + 1 && obj.srcId == currentSrc && obj.aniId == currentAniId;
+                    });
+                    if (!isThere) {
+                        console.log({epNum: currentEpNum + 1, srcId: currentSrc, aniId: currentAniId});
+                        alert("Không có tập sau");
+                        return;
+                    } else {
+                        changeEp(currentEpNum + 1, currentSrc, currentAniId);
+                    }
+                }
+                ;
+                //tắt/bật đèn của ngô tất tố
+                function lightoff() {
+                    if ($('.overlay').css('display') == 'none') {
+                        console.log("light on");
+                        $('.video-wrap').css({'zIndex': '99'});
+                        $('.overlay').css({'zIndex': '99', 'display': 'inline-block'});
+                        $('#light-btn').css({'zIndex': '99', 'background-color': '#fc6'});
+                    } else {
+                        console.log("light off");
+                        $('.video-wrap').css({'zIndex': '1'});
+                        $('.overlay').css({'zIndex': '99', 'display': 'none'});
+                        $('#light-btn').css({'zIndex': 'auto', 'background-color': 'transparent'});
+                    }
+                }
+                ;
+                //hàm get src from servlet:
+                //hasSrcTarget (boolean): true: get theo src nhất định || false: get nhiều src -> tăng biến đếm count => check count để kiểm tra tất cả các link đều 404 -> trigger mediaerror code 404
+                //epNum (int): số tập
+                //srcId (int): source id
+                //aniId (int): anime id
+                function preloadSrc(hasSrcTarget, epNum, srcId, aniId) {
+                    var result = [];
+                    $.ajax({
+                        async: true,
+                        type: "GET",
+                        data: {epnum: epNum, srcid: srcId, aniid: aniId}
+                        ,
+                        url: "<%= request.getContextPath()%>/get-link",
+                        success: function (response) {
+
+                            console.log(response);
+                            if (loaded == true)
+                                return;
+                            if (response == 'false') {
+                                count++;
+                                //truong hop chi 1 minh chi dinh
+//                                if (hasSrcTarget == true) {
+//                                    player.error({code: 404}); //trigger video bao loi
+//                                }
+                                return;
+                            } else {
+                                var json = JSON.parse(response.replace('\/', '/'));
+                                if (json.sources == null) {
+                                    count++;
+                                    //truong hop chi 1 minh chi dinh
+//                                    if (hasSrcTarget == true) {
+//                                        player.error({code: 404}); //trigger video bao loi
+//                                    }
+                                    return;
+                                }
+                                for (var i in json.sources) {
+                                    var directLink = json.sources[i].file;
+                                    var type = json.sources[i].type;
+                                    var label = json.sources[i].label;
+                                    if (directLink === undefined) {
+                                        directLink = json.sources.file;
+                                        type = "video/mp4";
+                                        label = "HD";
+                                    } else if (type.includes("video") == false) {
+                                        type = "video/" + type;
+                                    }
+//                                    console.log(type);
+                                    if (label == "Unknow") {
+                                        label = "HD";
+                                    }
+                                    result.push({
+                                        src: directLink,
+                                        type: type,
+                                        label: label
+                                    });
+                                }
+                                console.log("source added: OK");
+                                console.log(directLink);
+                                player.updateSrc(result);
+                                currentEpNum = epNum;
+                                currentSrc = srcId;
+                                loaded = true;
+                            }
+                        }
+                    });
+                }
+                ;
+            });
+
+    </script>
+</body>
 </html>

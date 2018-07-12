@@ -10,12 +10,21 @@ package model;
  * @author DrAgOn
  */
 public class Episode {
+    private int epId;
     private int aniId;
     private int epNumber;
     private int sourceId;
     private String sourceName;
     private String url;
     public Episode() {
+    }
+
+    public int getEpId() {
+        return epId;
+    }
+
+    public void setEpId(int epId) {
+        this.epId = epId;
     }
 
     public String getUrl() {

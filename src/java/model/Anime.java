@@ -27,10 +27,19 @@ public class Anime implements Serializable{
     private String picture;
     private int totalWatch;
     private int totalSubscriber;
+    private Type type;
     private ArrayList<Gender> gender= new ArrayList<>();
     private ArrayList<String> wallpager = new ArrayList<>();
     private String trailer = new String();
     public Anime() {
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public int getTotalSubscriber() {

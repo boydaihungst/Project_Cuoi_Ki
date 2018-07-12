@@ -52,6 +52,18 @@
         <servlet-name>AnimeErrReport</servlet-name>
         <servlet-class>controller.anime.AnimeErrReport</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GetVideoDirectLink</servlet-name>
+        <servlet-class>controller.anime.GetVideoDirectLink</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AnimeCollection</servlet-name>
+        <servlet-class>controller.AnimeCollection</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AnimeFilter</servlet-name>
+        <servlet-class>controller.AnimeFilter</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Search</servlet-name>
         <url-pattern>/tim-kiem</url-pattern>
@@ -83,6 +95,18 @@
     <servlet-mapping>
         <servlet-name>AnimeErrReport</servlet-name>
         <url-pattern>/anime/report</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GetVideoDirectLink</servlet-name>
+        <url-pattern>/get-link</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AnimeCollection</servlet-name>
+        <url-pattern>/anime-collection</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AnimeFilter</servlet-name>
+        <url-pattern>/Filter</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

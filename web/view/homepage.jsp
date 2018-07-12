@@ -1,9 +1,10 @@
 <%-- 
-    Document   : homepage
-    Created on : Jun 24, 2018, 8:46:46 PM
-    Author     : DrAgOn
+   Document   : homepage
+   Created on : Jun 24, 2018, 8:46:46 PM
+   Author     : DrAgOn
 --%>
 
+<%@page import="Utils.TimeUtils"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.HashMap"%>
@@ -23,7 +24,7 @@
         <title>Anime Online</title>
         <jsp:include page="/templates/libs.jsp"></jsp:include>
             <style>
-                
+
                 a{
                     transition: color 0.25s;
                     -webkit-transition: color 0.25s; /* Safari 3.1 to 6.0 */
@@ -36,19 +37,17 @@
                 .tab-title{
                     font-size: 16px;
                 }
-                .left-side .preview-item:hover .top-caption{
-                    display: none;
-                }
+
                 .left-side,.right-side{
                     margin: 0;
                     padding:0;
                     width: auto;
                 }
-                
+
                 .item-border{
                     position: relative;
-                    width: 155px !important;
-                    height: 217px !important;
+                    width:175px !important;
+                    height: 237px !important;
                 }
                 .bottom-caption {
                     margin:0;
@@ -61,22 +60,19 @@
                     left: 0;
                     width: 100%;
                 }
-                /*            .play-btn-overlay{
-                                box-shadow: 0 0 10px 5px #171717 !important;
-                                position: absolute;
-                                top: 35%;
-                                left: 35%;
-                                z-index: 99;
-                                width: auto;
-                                height: 50px;
-                                margin:0;
-                                border-radius: 50%;
-                                padding:0;
-                            }
-                            .left-side .preview-item:hover .play-btn-overlay{
-                                display:none;
-                                
-                            }*/
+                .left-side .preview-item:hover .top-caption,.left-side .preview-item:hover .type-caption{
+                    display: none;
+                }
+                .type-caption{
+                    margin:0;
+                    padding:0;
+                    font-size:14px;
+                    opacity: 1;
+                    position: absolute;
+                    bottom: 9%;
+                    right: 0%;
+                    width: auto;
+                }
                 .top-caption{
                     margin:0;
                     padding:0;
@@ -94,7 +90,11 @@
                     background: red;
                     padding: 2px 5px;
                 }
-                .bottom-caption p, .top-caption p{
+                .type-caption p{
+                    background: green;
+                    padding: 2px 5px;
+                }
+                .bottom-caption p, .top-caption p,.top-caption p{
                     color:white;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -111,7 +111,7 @@
                     background: green;
                 }
                 .img-icon-right{
-                    height: auto;
+                    height: auto !important;
                 }
                 .preview-item{
                     width: auto;
@@ -185,10 +185,10 @@
                     margin:0;
                 }
                 .content-anime-right{
-                    margin:0;
-                    padding:0;
+                    padding-left: 10px;
                     font-size:12px;
                     width: 150px;
+                    height: 85px;
                 }
                 .content-anime-right p{
                     color: white;
@@ -203,12 +203,12 @@
                 }
                 .view-more{
                     font-size: 12px;
+                    padding:0;
                     padding-top: 15px;
                     float:right;
                 }
                 .title-container{
-                    margin-top:20px;
-                    margin-bottom: 15px;
+                    margin: 20px 0px !important;
                     color: chartreuse;
                     border-bottom: 1.5px solid chartreuse!important;
                 }
@@ -242,7 +242,15 @@
                 }
                 .left-title-anime{
                     padding-bottom: 0;
-                    padding-top: 13px;
+                    /*padding-top: 10px;*/
+                }
+                .top-row{
+                    padding-bottom: 15px !important;
+                    padding-top: 15px !important;
+                }
+                .text-content-anime-right{
+                    height: 100% !important;
+                    width: 150px;
                 }
             </style>
         </head>
@@ -251,8 +259,9 @@
                 <div class="container-fluid header">
                 <jsp:include page="/templates/header.jsp"></jsp:include>
                 </div>
-                <div id="body-container" class="container" >
-                    <div class="row">
+                <div class="container" >
+                    <div class="overlay"></div>
+                    <div class="row top-row" >
                         <div class="col-sm-8 left-side">
                             <ul class="nav nav-tabs">
                                 <li class="col-sm-4 active"><a data-toggle="tab" href="#menu0">Anime mùa mới</a></li>
@@ -265,7 +274,11 @@
                             %>
                             <div id="menu<%=++m%>" class="tab-pane fade in <%= m == 0 ? "active" : ""%>">
                                 <div class="row title-container ">
-                                    <span class="title-tab-left col-sm-10"><%= en.getKey()%></span> <%if (en.getValue().size() > 24) {%><a href="#" class="view-more col-sm-2">Xem Thêm >></a><%}%>
+                                    <%if (m < 2) {%>
+                                    <span class="title-tab-left col-sm-10"><%="ANIME MÙA "%> <%= TimeUtils.seasonEngtoVn(en.getKey())%></span> <%if (en.getValue().size() > 24) {%><a href="<%= request.getContextPath()%>/anime-collection?filter=<%= en.getKey().replaceAll(" ", "-")%>" class="col-sm-2 view-more text-right">Xem Thêm >></a><%}%>
+                                    <%} else {%>
+                                    <span class="title-tab-left col-sm-10"><%= "ANIME MỚI CẬP NHẬT"%></span> <%if (en.getValue().size() > 24) {%><a href="<%= request.getContextPath()%>/anime-collection?filter=update-recent" class="col-sm-2 view-more text-right">Xem Thêm >></a><%}%>
+                                    <%}%>
                                 </div>
                                 <% for (int i = 0; i < 24; i++) {%>
                                 <div class="row">
@@ -287,12 +300,12 @@
                                             </div>
                                             <div class="item-border item">
                                                 <div class="top-caption text-center ">
-                                                    <p><%= en.getValue().get(i).getEpsRel() == 0 ? "???" : en.getValue().get(i).getEpsRel()%>/<%= en.getValue().get(i).getEpsMax() == 0 ? "???" : en.getValue().get(i).getEpsMax()%> Tap</p>
+                                                    <p><%= en.getValue().get(i).getEpsRel() == 0 ? "???" : en.getValue().get(i).getEpsRel()%>/<%= en.getValue().get(i).getEpsMax() == 0 ? "???" : en.getValue().get(i).getEpsMax()%> Tập</p>
                                                 </div>
-                                                <!--                                                <div class="text-center ">
-                                                                                                    <img src="img/play-btn.png" alt="" class="play-btn-overlay img-responsive"/>
-                                                                                                </div>-->
                                                 <img data-src="<%= request.getContextPath() + "/" + en.getValue().get(i).getPicture()%>" alt="" class="img-responsive img-icon lazyload">
+                                                <div class="type-caption text-center ">
+                                                    <p><%= en.getValue().get(i).getType().getTypeNameShort()%></p>
+                                                </div>
                                                 <div class="bottom-caption text-center ">
                                                     <p><%= en.getValue().get(i).getAniName()%></p>
                                                 </div>
@@ -310,13 +323,16 @@
                             %>
                         </div>
                         <div class="row title-container ">
-                            <span class="title-tab-left col-sm-10">ANIME DÀI TẬP</span><a href="#" class="view-more col-sm-2">Xem Thêm >></a>
+                            <span class="title-tab-left col-sm-10">ANIME DÀI TẬP</span><a href="<%= request.getContextPath()%>/anime-collection?filter=most-eps" class=" col-sm-2 view-more text-right">Xem Thêm >></a>
                         </div>
-                         <div class="row">
-                            <%for (int j = 0; j < 4; j++) {
+                        <div class="row">
+                            <%for (int j = 0; j < anime_most_ep.size(); j++) {
+                                    if (j >= 4) {
+                                        break;
+                                    }
                             %>
                             <div  class="col-sm-3 preview-item">
-                                <a href="#">
+                                <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= anime_most_ep.get(j).getAniId()%>">
                                     <div class="item-info <%= j >= 2 ? "item-info-box-right" : "item-info-box-left"%>">
 
                                         <div class="item-info-title">
@@ -334,6 +350,9 @@
                                         <noscript> 
                                         <img src="<%= request.getContextPath() + "/" + anime_most_ep.get(j).getPicture()%>" class="img-responsive img-icon ">
                                         </noscript>
+                                        <div class="type-caption text-center ">
+                                                    <p><%= anime_most_ep.get(j).getType().getTypeNameShort()%></p>
+                                                </div>
                                         <div class="bottom-caption text-center ">
                                             <p><%= anime_most_ep.get(j).getAniName()%></p>
                                         </div>
@@ -357,7 +376,7 @@
                         <div class="row right-container">
                             <div class="col-sm-4">
                                 <div  class="preview-item">
-                                    <a href="#">
+                                    <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= anime_most_clicked.get(j).getAniId()%>">
                                         <div class="item-border-right item">
                                             <div class="top-caption top-caption-right text-center ">
                                                 <p><%= anime_most_clicked.get(j).getEpsRel() == 0 ? "???" : anime_most_clicked.get(j).getEpsRel()%>/<%= anime_most_clicked.get(j).getEpsMax() == 0 ? "???" : anime_most_clicked.get(j).getEpsMax()%> Tap</p>
@@ -374,17 +393,19 @@
                                 <div class="row">
                                     <div class="col-sm-12 preview-item left-title-anime">
                                         <div class="title-anime-right">
-                                            <a href="#">
+                                            <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= anime_most_clicked.get(j).getAniId()%>">
                                                 <p><%= anime_most_clicked.get(j).getAniName()%></p>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-12 ">
-                                        <div class="content-anime-right ">
-                                            <a href="#">
-                                                <p><%= anime_most_clicked.get(j).getDesc().length() >= 100 ? anime_most_clicked.get(j).getDesc().substring(0, 100) + "..." : anime_most_clicked.get(j).getDesc()%></p>
+                                    <div class="col-sm-12 " style="padding-left: 0px;">
+                                        <div class="content-anime-right">
+                                            <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= anime_most_clicked.get(j).getAniId()%>">
+                                                <div class="overflow-ellipsis text-content-anime-right">
+                                                    <p><%= anime_most_clicked.get(j).getDesc()%></p>
+                                                </div>
                                             </a>
                                         </div>
                                     </div>
@@ -394,6 +415,9 @@
                         <%}%>
                     </div>
                 </div>
+            </div>
+            <div class="container-fluid footer">
+                <jsp:include page="/templates/footer.jsp"></jsp:include>
             </div>
         </div>
     </body>

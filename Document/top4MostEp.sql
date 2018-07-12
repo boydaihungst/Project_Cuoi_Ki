@@ -1,4 +1,4 @@
-USE [AnimeVietsub]
+﻿USE [AnimeVietsub]
 GO
 
 /* select top 4 phim co so luong tap nhieu nhat */
@@ -111,6 +111,31 @@ UPDATE [WatchStatisticByDay]
   FROM [Anime] a
   where a.AniID=3
   
+  --filter by multi field. Demo catId =5 AND =10 ...
+SELECT *
+  FROM (SELECT  ROW_NUMBER() OVER (ORDER BY a.[AniName] asc) as RowNumber
+				,a.[AniID]
+				,a.[AniName]
+				,a.[AniSeason]
+				,a.[ReleaseTime]
+				,a.[AniStatus]
+				,a.[EpsMax]
+				,a.[UpdateTime]
+				,a.[EpsReleased]
+				,a.[Desc]
+				,a.[Picture]
+				,a.[Trailer]
+				,t.[TypeID]
+				,t.[TypeName]
+				,t.[TypeNameShort]
+          FROM   [Anime] a INNER JOIN [Type] t 
+								ON a.TypeID = t.TypeID AND convert(date, a.[ReleaseTime]) between convert(date, '2018-01-01') AND convert(date, '2018-07-11')  AND t.TypeID =2 AND a.AniStatus = 1
+						  INNER JOIN (SELECT cd.AniID FROM [CategorieDetails] cd where cd.CatID in (5, 10) group by cd.AniID having count(*) = 2) AS tblB 
+								ON tblB.AniID = a.AniID) as tblFinal
+	WHERE RowNumber BETWEEN 0 AND 10
+  
+
+	  --count(*) =2 tương đương với có 2 CatID được tìm
  --================================================
  /*Trigger khi add || update them ep + add them EP/source EP  + update table Anime -> thi dong thoi cap nhat lai UpdateTime trong table Anime*/
 

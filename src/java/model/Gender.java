@@ -10,32 +10,46 @@ package model;
  * @author DrAgOn
  */
 public class Gender {
-    private int genId;
-    private String genName;
+    private int catId;
+    private String catName;
+    private String catDesc;
+
+    public Gender(int catId, String catName) {
+        this.catId = catId;
+        this.catName = catName;
+    }
 
     public Gender() {
     }
 
-    public Gender(int genId, String genName) {
-        this.genId = genId;
-        this.genName = genName;
+    public int getCatId() {
+        return catId;
     }
 
-    public int getGenId() {
-        return genId;
+    public void setCatId(int catId) {
+        this.catId = catId;
     }
 
-    public void setGenId(int genId) {
-        this.genId = genId;
+    public String getCatName() {
+        return catName;
     }
 
-    public String getGenName() {
-        return genName;
+    public void setCatName(String catName) {
+        this.catName = catName;
     }
 
-    public void setGenName(String genName) {
-        this.genName = genName;
+    public String getCatDesc() {
+        return catDesc;
     }
-    
+
+    public void setCatDesc(String catDesc) {
+        this.catDesc = catDesc;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        Gender temp = (Gender) obj;
+        return temp.getCatId()==this.catId;
+    }
     
 }

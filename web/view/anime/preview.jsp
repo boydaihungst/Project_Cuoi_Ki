@@ -112,7 +112,19 @@
         </style>
     </head>
     <body>
+        <div id="fb-root"></div>
+        <script>
+            $(document).ready(function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id))
+                    return;
+                js = d.createElement(s);
+                js.id = id;
+                js.src = 'https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v3.0';
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));</script>
         <div class="container-body">
+            <div class="overlay"></div>
             <div class="container-fluid header">
                 <jsp:include page="/templates/header.jsp"></jsp:include>
                 </div>
@@ -134,22 +146,24 @@
                         <h2 class="anime-title text-center"><%= a.getAniName()%></h2>
                         <ul class="list-group">
                             <!--//gender-->
-                            <li class="list-group-item wheat-color "><span class="green-color">Thể loại:</span>
+                            <li class="list-group-item wheat-color "><span class="green-color">Thể loại: </span>
                                 <% for (int i = 0; i < a.getGender().size(); i++) {%>
                                 <%if (i == a.getGender().size() - 1) {%>
-                                <a class="sub-title-link-color" href="#"><%= a.getGender().get(i).getGenName()%></a>
+                                <a class="sub-title-link-color" href="#"><%= a.getGender().get(i).getCatName()%></a>
                                 <%  break;
                                     }%>
-                                <a class="sub-title-link-color" href="#"><%= a.getGender().get(i).getGenName()%>,</a>
+                                <a class="sub-title-link-color" href="#"><%= a.getGender().get(i).getCatName()%>,</a>
                                 <%}
                                 %>
                                 <!--end-->
                             </li>
-                            <li class="list-group-item wheat-color "><span  class="green-color">Số tập:</span><span href="#"><%= a.getEpsRel()%>/<%= a.getEpsMax()%> Tập</span></li>
-                            <li class="list-group-item wheat-color "><span class="green-color">Lượt xem:</span><span href="#"><%= a.getTotalWatch()%></span></li>
-                            <li class="list-group-item wheat-color "><span class="green-color">Năm phát sóng:</span><a class="sub-title-link-color" href="#"><%= TimeUtils.getSeasonYearName(a.getReleaseTime())%></a></li>
-                            <li class="list-group-item wheat-color "><span class="green-color">Tình trạng:</span><a class="sub-title-link-color" href="#"><%= a.getAniStatus() == 1 ? "Hoàn thành" : (a.getAniStatus() == 0 ? "Sắp hoàn thành" : "Sắp phát hành")%></a></li>
-                            <li class="list-group-item wheat-color "><span class="green-color">Số người theo dõi:</span><span  href="#"><%= a.getTotalSubscriber()%></span></li>
+                            <li class="list-group-item wheat-color "><span  class="green-color">Loại phim: </span><a class="sub-title-link-color" href="#"><%= a.getType().getTypeName()%></a></li>
+
+                            <li class="list-group-item wheat-color "><span  class="green-color">Số tập: </span><span href="#"><%= a.getEpsRel()%>/<%= a.getEpsMax()%> Tập</span></li>
+                            <li class="list-group-item wheat-color "><span class="green-color">Lượt xem: </span><span href="#"><%= a.getTotalWatch()%></span></li>
+                            <li class="list-group-item wheat-color "><span class="green-color">Năm phát sóng: </span><a class="sub-title-link-color" href="#"><%= TimeUtils.seasonEngtoVn(TimeUtils.getSeasonYearByDate(a.getReleaseTime()))%></a></li>
+                            <li class="list-group-item wheat-color "><span class="green-color">Tình trạng: </span><a class="sub-title-link-color" href="#"><%= a.getAniStatus() == 1 ? "Hoàn thành" : (a.getAniStatus() == 0 ? "Sắp hoàn thành" : "Sắp phát hành")%></a></li>
+                            <li class="list-group-item wheat-color "><span class="green-color">Số người theo dõi: </span><span  href="#"><%= a.getTotalSubscriber()%></span></li>
                         </ul>
                     </div>
                     <!--phan nut chuyen sang trang watch-->
@@ -181,22 +195,28 @@
                     </div>
                 </div>
                 <!--comment-->
-                <div class="row">
-                    <div class="col-sm-12 comment-wrap">
+                <div class="row" style="margin-bottom: 30px; margin-top: 15px">
+                    <div class="col-sm-10 col-md-offset-1">
+                        <div class="fb-comments" data-href="http://localhost:8080<%= request.getContextPath()%>/anime/watch?aniid=<%= a.getAniId()%>" order_by="time" colorscheme="dark" data-width="100%" data-numposts="5"></div>
                     </div>
                 </div>
             </div>
-        </div>
-        <script src="https://vjs.zencdn.net/7.0.3/video.js"></script>
-        <script src="<%= request.getContextPath()%>/js/Youtube.min.js"></script>
+            <div class="container-fluid footer">
+                <jsp:include page="/templates/footer.jsp"></jsp:include>
+                </div>
+            </div>
+
+            <script src="https://vjs.zencdn.net/7.0.3/video.js"></script>
+            <script src="<%= request.getContextPath()%>/js/Youtube.min.js"></script>
         <script src="<%= request.getContextPath()%>/js/videojs-resolution-switcher.js"></script>
         <script>
             $(document).ready(function () {
-                $('#bookmark-btn').popover({content: "Nhấn vào đây để lưu phim", animation: true});
-                var subscriber_popover = $('#bookmark-btn').data('bs.popover');
             <% if (account == null) { %>
                 $('#bookmark-btn').popover({content: "Để lưu bạn cần phải đăng nhập", animation: true});
+                var subscriber_popover = $('#bookmark-btn').data('bs.popover');
             <%} else {%>
+                $('#bookmark-btn').popover({content: "", animation: true});
+                var subscriber_popover = $('#bookmark-btn').data('bs.popover');
                 subscribeCheck();
             <%}%>
                 $('#btn-watch').click(function () {
@@ -217,7 +237,6 @@
                                             subscriber_popover.options.content = "Bạn đã theo dõi phim rồi";
                                             $(".popover-content").html('Bạn đã theo dõi phim rồi');
                                         } else {
-
                                             subscriber_popover.options.content = "Bạn đã theo dõi thành công";
                                             $(".popover-content").html('Bạn đã theo dõi thành công');
                                         }
@@ -237,8 +256,10 @@
                                         if (this.responseText === "true") {
                                             subscriber_popover.options.content = "Bạn đã theo dõi phim rồi";
                                             $(".popover-content").html('Bạn đã theo dõi phim rồi');
-
+                                        } else if (this.responseText === "404") {
+                                            $('#bookmark-btn').popover({content: "Để lưu bạn cần phải đăng nhập", animation: true});
                                         } else {
+                                            $('#bookmark-btn').popover({content: "Nhấn vào đây để lưu phim", animation: true});
                                             $('#bookmark-btn').click(function () {
                                                 subscribe();
                                             });
@@ -256,7 +277,7 @@
             var player = videojs('video', {
                 controls: true,
                 techOrder: ["youtube"],
-                sources: [{"type": "video/youtube", "src": "<%= a.getTrailer() %>"}],
+                sources: [{"type": "video/youtube", "src": "<%= a.getTrailer()%>"}],
                 plugins: {
                     videoJsResolutionSwitcher: {
                         default: 'high',

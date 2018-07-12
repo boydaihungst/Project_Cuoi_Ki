@@ -21,7 +21,36 @@ public class EpisodeDAO extends BaseDAO<Episode> {
 
     @Override
     public Episode get(Episode model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Episode e = null;
+        try {
+            String query = " SELECT [EpID]\n"
+                    + "      ,[AniID]\n"
+                    + "	  ,e.SourceID\n"
+                    + "	  ,e.SourceName\n"
+                    + "	  ,[EpNumber]\n"
+                    + "	  ,a.Url\n"
+                    + "  FROM [AnimeEpisodes] a inner join EpisodeSource e \n"
+                    + "  ON a.SourceID=e.SourceID AND AniID=? AND e.SourceID=? AND EpNumber=?\n"
+                    + "  ORDER BY e.SourceName, [EpNumber] ";
+            CallableStatement statement = connection.prepareCall(query);
+            statement.setInt(1, model.getAniId());
+            statement.setInt(2, model.getSourceId());
+            statement.setInt(3, model.getEpNumber());
+
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                e = new Episode();
+                e.setEpId(rs.getInt("EpID"));
+                e.setAniId(rs.getInt("AniID"));
+                e.setEpNumber(rs.getInt("EpNumber"));
+                e.setSourceId(rs.getInt("SourceID"));
+                e.setSourceName(rs.getString("SourceName"));
+                e.setUrl(rs.getString("Url"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(EpisodeDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return e;
     }
 
     public ArrayList<Episode> getAllByAniID(Episode model) {
@@ -41,6 +70,7 @@ public class EpisodeDAO extends BaseDAO<Episode> {
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Episode e = new Episode();
+                e.setEpId(rs.getInt("EpID"));
                 e.setAniId(rs.getInt("AniID"));
                 e.setEpNumber(rs.getInt("EpNumber"));
                 e.setSourceId(rs.getInt("SourceID"));

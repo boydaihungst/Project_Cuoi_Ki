@@ -10,4 +10,3 @@
 <link rel="stylesheet" href="<%= request.getContextPath()%>/css/owl.theme.default.min.css">
 <script src="<%= request.getContextPath()%>/js/owl.carousel.min.js"></script>
 <script src="<%= request.getContextPath()%>/js/smooth-scroll-effect.js"></script>
-<script src="<%= request.getContextPath()%>/js/fbApi.js"></script>

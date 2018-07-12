@@ -28,6 +28,9 @@ public class AnimeSubscribe extends HttpServlet {
         FavoriteDAO fDAO = new FavoriteDAO();
         try {
             Account a = (Account) request.getSession(true).getAttribute("account");
+            if(a == null){
+                response.getWriter().print("404");
+            }
             int aniId = Integer.parseInt(request.getParameter("aniid"));
             int accId = a.getAccid();
             if (fDAO.get(new Favorite(accId, aniId, null)) != null) {

@@ -41,7 +41,7 @@ public class Search extends HttpServlet {
         Anime a = new Anime();
         
         a.setAniName(aniName);
-        ArrayList<Anime> animes = aniDAO.filter(a);
+        ArrayList<Anime> animes = aniDAO.searchByName(a);
         response.getWriter().write(gson.toJson(animes));
     }
     @Override

@@ -36,7 +36,7 @@ public class AnimeView extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/homepage");
             }
         } catch (NumberFormatException e) {
-                response.sendRedirect(request.getContextPath() + "/homepage");
+            response.sendRedirect(request.getContextPath() + "/homepage");
         }
     }
 
