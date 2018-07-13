@@ -9,9 +9,30 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>404 not found</title>
+         <jsp:include page="/templates/libs.jsp"></jsp:include>
+        <style>
+            .notfound{
+                width: 100%;
+                text-align: center;
+                padding:0;
+                margin:0;
+                position: fixed;
+                top:25%;
+                /*left:5%*/
+                font-size: 60px !important;
+            }
+        </style>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <div class="container-body">
+            <div class="container-fluid header">
+                <jsp:include page="/templates/header.jsp"></jsp:include>
+                </div>
+                <div class="notfound">
+                    <p>404<br>NOT<br>FOUND</p>
+            </div>
+        </div>
+
     </body>
 </html>
