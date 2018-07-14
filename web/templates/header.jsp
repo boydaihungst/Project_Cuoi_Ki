@@ -4,6 +4,8 @@
     Author     : DrAgOn
 --%>
 
+<%@page import="model.Anime"%>
+<%@page import="model.Favorite"%>
 <%@page import="model.Account"%>
 <%@page import="model.Gender"%>
 <%@page import="java.util.ArrayList"%>
@@ -13,13 +15,16 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%
+            ArrayList<Anime> favs = (ArrayList<Anime>) request.getAttribute("favs");
+            if (favs == null) {
+                favs = new ArrayList<Anime>();
+            }
             ArrayList<Gender> cats = (ArrayList<Gender>) request.getAttribute("cats");
-
             Account account = (Account) session.getAttribute("account");
-            
-           String[] alphabet ={"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+            String[] alphabet = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
         %>
         <style>
+
             /* width */
             ::-webkit-scrollbar {
                 width:5px;
@@ -58,8 +63,8 @@
                 width: 100%;
             }
             .top-row{
-                    min-height: 1080px
-                }
+                min-height: 1080px
+            }
             .row{
                 margin: 0;
                 padding:0;
@@ -119,9 +124,83 @@
                 opacity: 0.95;
             }
             .dropdown:hover>.dropdown-menu
-            ,.dropdown:focus>.dropdown-menu{
+            ,.dropdown:focus>.dropdown-menu
+            ,.dropdown-w-arrow:hover .dropdown-arrow-wrap{
                 display: block;
-                /*margin-top: 0;*/
+            }
+            .dropdown-w-arrow .dropdown-toggle{
+                padding: 10px 15px;
+                padding-top: 15px;
+                padding-bottom: 15px;
+            }
+            .dropdown-w-arrow .dropdown-menu{
+                overflow-x: hidden;
+                overflow-y: auto;
+                max-height: 600px;
+                min-height: 200px;
+                width: 100%;
+                border: 1px solid #33cc00;
+                margin: 0;
+                margin-top: 10px !important;
+                padding:0px 0px;
+            }
+            .dropdown-w-arrow .dropdown-menu li{
+                /*padding cho close button*/
+                border-bottom: 1px solid #ccc;
+                position: relative;
+            }
+            .dropdown-w-arrow .dropdown-menu li a{
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: #33cc00  !important;
+                padding:10px 0px 10px 10px;
+                width: 85%;
+            }
+            .dropdown-w-arrow .dropdown-menu .close-btn{
+                width: 18% !important;
+                text-align: center;
+                font-size: 1.5em;
+                position: absolute;
+                top: 0px;
+                padding: 5px;
+                right: 0;
+                background-color: transparent;
+                border: transparent;
+            }
+            .dropdown-w-arrow .dropdown-menu li:hover{
+                background-color: #eee !important;
+
+            }
+            .dropdown-w-arrow .dropdown-menu li:hover a
+            ,.dropdown-w-arrow .dropdown-menu li:hover .close-btn{
+                color: black  !important;
+            }
+            .dropdown-w-arrow .dropdown-menu li .close-btn:hover{
+                color:red !important;
+            }
+            .dropdown-w-arrow .dropdown-menu li a{
+                color:white !important;
+            }
+            .dropdown-w-arrow .dropdown-arrow-wrap{
+                display: none;
+                height: 10px;
+                width: 100%;
+                position: absolute;
+                bottom: -10px;
+                left: 0;
+            }
+            .dropdown-w-arrow .dropdown-arrow{
+                display: inline;
+                z-index: 2000;
+                height: 0;
+                width: 0;
+                position: absolute;
+                /*bottom: -10px;*/
+                right: 45%;
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-bottom: 10px solid #33cc00;
             }
             .navbar-toggle{
                 font-size: 20px;
@@ -311,6 +390,39 @@
                 text-overflow: ellipsis;
                 /*                    line-height: normal;*/
             }
+            .notification{
+                visibility:hidden;
+                color:black;
+                position: absolute;
+                top:110px;
+                bottom: auto;
+                right: 20px;
+                width: auto;
+                min-width:300px;
+                min-height: 50px;
+                padding:10px;
+                z-index: 2000;
+                background-color:#d9edf7;
+                border:1px solid #bce8f1;
+                border-radius: 15px;
+                opacity: 0;
+                transition: visibility 0s, opacity 0.5s;
+                -webkit-transition: visibility 0s, opacity 0.5s; /* Safari 3.1 to 6.0 */
+            }
+
+            .affix{
+                position: fixed;
+                top:60px;
+                bottom: auto;
+                z-index: 9999 !important;
+            }
+            .alert{
+                padding: 0;
+                margin:0;
+                border:none;
+                border-radius:0;
+            }
+
         </style>
     </head>
     <body>
@@ -342,7 +454,23 @@
                 <%} else {%>
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="" onclick="return false;"><span class="glyphicon glyphicon-user"></span><%= account.getUsername()%></a></li>
-                    <li><a href="" onclick="return false;"><span class="glyphicon glyphicon-list-alt"></span>Anime đang theo dõi</a></li>
+                    <li class="dropdown dropdown-w-arrow ">
+                        <a href="" class=" dropdown-toggle"onclick="return false;">
+                            <span class="glyphicon glyphicon-list-alt" onclick="return false;">
+                            </span>Anime đang theo dõi
+                            <div class="dropdown-arrow-wrap">
+                                <span class="dropdown-arrow"></span></div>
+                        </a>
+                        <ul class="dropdown-menu favorite-dropdown-menu">
+                            <% for (Anime f : favs) {%>
+                            <li class="alert fade in" role="presentation" >
+                                <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= f.getAniId()%>"><span><%=  f.getAniName()%></span></a>
+                                <a href="" class="close-btn" data-dismiss="alert" onclick="unsubscribe(<%= f.getAniId()%>);return false;">&times;</a>
+                            </li>
+                            <%}
+                            %>
+                        </ul>
+                    </li>
                     <li id="logout-btn"><a href="" onclick="return false;"><span class="glyphicon glyphicon-log-out"></span>Đăng xuất</a></li>
                 </ul>
                 <%}%>
@@ -368,47 +496,49 @@
                 <p id="respond2"></p>
                 <button type="submit" class="btn btn-primary ">Đăng kí</button>
                 <button type="button" class="btn btn-primary "  onclick="$('#login-btn').click()">Đăng nhập</button>
-
             </form>
+
         </div>
+        <div class="notification" data-spy="affix" data-offset-top="">
+            <p></p></div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
                 <li >
                     <a class="nav-title" href="<%= request.getContextPath()%>/homepage" >Trang chủ</a>
                 </li>
                 <li class="dropdown">
-                    <a class="dropdown-toggle nav-title" href="<%= request.getContextPath() %>/Filter?">Anime theo năm
+                    <a class="dropdown-toggle nav-title" href="<%= request.getContextPath()%>/Filter?">Anime theo năm
                     </a>
                     <ul class="dropdown-menu anime-type-drop-box">
                         <li>
                             <div class="row">
                                 <% for (int i = 2010; i < 2019; i++) {%>
-                                <a class="col-sm-3" href="<%= request.getContextPath() %>/Filter?year=<%= i %>">Năm <%=i%></a>
+                                <a class="col-sm-3" href="<%= request.getContextPath()%>/Filter?year=<%= i%>">Năm <%=i%></a>
                                 <%}
                                 %>
                         </li>
                     </ul>
                 </li>
                 <li class="dropdown">
-                    <a class="dropdown-toggle nav-title" href="<%= request.getContextPath() %>/Filter?">Thể loại</a>
+                    <a class="dropdown-toggle nav-title" href="<%= request.getContextPath()%>/Filter?">Thể loại</a>
                     <ul class="dropdown-menu anime-type-drop-box">
                         <li>
                             <div class="row">
                                 <% for (int i = 0; i < cats.size(); i++) {%>
-                                <a class="col-sm-3" href="<%= request.getContextPath() %>/Filter?gender=<%=cats.get(i).getCatId()%>"><span class="glyphicon glyphicon-triangle-right"></span><span><%= cats.get(i).getCatName()%></span></a>
+                                <a class="col-sm-3" href="<%= request.getContextPath()%>/Filter?gender=<%=cats.get(i).getCatId()%>"><span class="glyphicon glyphicon-triangle-right"></span><span><%= cats.get(i).getCatName()%></span></a>
                                         <%}
                                         %>
                             </div>
                         </li>
                     </ul>
                 </li>
-                <li><a href="<%= request.getContextPath() %>/Filter?type=1">Anime Blu-ray</a></li>
+                <li><a href="<%= request.getContextPath()%>/Filter?type=1">Anime Blu-ray</a></li>
                 <li class="dropdown"><a href="<%= request.getContextPath()%>/anime-collection?filter=alphabet">Danh sách anime</a>
                     <ul class="dropdown-menu anime-type-drop-box">
                         <li>
                             <div class="row">
                                 <% for (int i = 0; i < alphabet.length; i++) {%>
-                                <a class="col-sm-3" href="<%= request.getContextPath()%>/anime-collection?filter=alphabet&keyword=<%= alphabet[i] %>"><span class="glyphicon glyphicon-triangle-right"></span><span><%= alphabet[i]%></span></a>
+                                <a class="col-sm-3" href="<%= request.getContextPath()%>/anime-collection?filter=alphabet&keyword=<%= alphabet[i]%>"><span class="glyphicon glyphicon-triangle-right"></span><span><%= alphabet[i]%></span></a>
                                         <%}
                                         %>
                             </div>
@@ -420,8 +550,13 @@
         </div>
 
         <script>
+             var subscriber_popover;
             $(document).ready(function () {
-
+                $('.notification').affix({
+                    offset: {
+                        top: $('#myNavbar').height()
+                    }
+                });
                 //overflow-multiline-ellipsis
                 lineclamp();
                 $(window).resize(function () {
@@ -445,7 +580,7 @@
                 //login
                 $("#login-form>.btn-close").click(function () {
                     show_login_box();
-//                    $('.overlay').hide();
+                    //                    $('.overlay').hide();
                 });
                 $("#login-btn").click(function () {
                     show_login_box();
@@ -462,7 +597,7 @@
                 //reg
                 $("#reg-form>.btn-close").click(function () {
                     show_reg_box();
-//                    $('.overlay').hide();
+                    //                    $('.overlay').hide();
                 });
                 $("#reg-btn").click(function () {
                     show_reg_box();
@@ -479,6 +614,9 @@
                     if (e.target.id !== 'search-input' && !$.contains($box[0], e.target))
                         $(".search-result-box").hide();
                 });
+                $('#bookmark-btn').popover({content: "", animation: true});
+                subscriber_popover = $('#bookmark-btn').data('bs.popover');
+                
             });
             //main funtion
             function show_login_box() {
@@ -634,6 +772,78 @@
                     p.css({"-webkit-line-clamp": "" + calc + ""});
                 });
             }
+            ;
+
+            function subscribe(aniid) {
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        console.log('subcribe: ' + this.responseText);
+                        if (this.responseText === "false") {
+                            subscriber_popover.options.content = "Bạn đã theo dõi phim rồi";
+                            $(".popover-content").html('Bạn đã theo dõi phim rồi');
+                        } else {
+                            subscriber_popover.options.content = "Bạn đã theo dõi thành công";
+                            $(".popover-content").html('Bạn đã theo dõi thành công');
+                        }
+                    }
+                };
+                xhttp.open("POST", "<%=request.getContextPath()%>/anime/subscribe", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("aniid=" + aniid);
+            }
+            ;
+            function subscribeCheck(aniid) {
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        console.log('check subcribe: ' + this.responseText);
+                        if (this.responseText === "true") {
+                            subscriber_popover.options.content = "Bạn đã theo dõi phim rồi";
+                            $(".popover-content").html('Bạn đã theo dõi phim rồi');
+                        } else if (this.responseText === "404") {
+                            subscriber_popover.options.content = "Để lưu bạn cần phải đăng nhập!!";
+                            $(".popover-content").html('Để lưu bạn cần phải đăng nhập!!');
+                        } else {
+                            subscriber_popover.options.content = "Nhấn vào đây để lưu phim";
+                            $(".popover-content").html('Nhấn vào đây để lưu phim');
+                            $('#bookmark-btn').click(function () {
+                                subscribe(aniid);
+                            });
+                        }
+                    }
+                };
+                xhttp.open("GET", "<%=request.getContextPath()%>/anime/subscribe?aniid=" + aniid, true);
+                xhttp.send();
+            }
+            ;
+//                  unfollow anime
+            var noti = $('.notification');
+            var timeout;
+            function unsubscribe(aniId) {
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        console.log('subcribe: ' + this.responseText);
+                        if (this.responseText === "true") {
+                            if (timeout)
+                                clearTimeout(timeout);  //clear time out de k bi conflict khi bam lien tuc ~~
+                            noti.text('Đã xóa thành công');
+                            noti.css({'opacity': '1',"visibility":"visible"});
+                            timeout = setTimeout(function () {
+                                noti.css({'opacity': '0',"visibility":"hidden"});
+                            }, 1000);
+                        }
+                    }
+                };
+                xhttp.open("POST", "<%=request.getContextPath()%>/anime/unsubscribe", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("aniid=" + aniId);
+            }
+            ;
         </script> 
     </body>
 </html>

@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Episode;
+import model.Source;
 
 /**
  *
@@ -40,9 +41,10 @@ public class GetVideoDirectLink extends HttpServlet {
             HttpURLConnection c;
             Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(_proxy, 8080));
             c = isNeedProxy ? ((HttpURLConnection) url.openConnection(proxy)) : ((HttpURLConnection) url.openConnection());
-            c.addRequestProperty("User-Agent", "Mozilla/4.76");
+            c.addRequestProperty("User-Agent", "Mozilla/5.0");
             c.setRequestMethod("GET");
             c.setConnectTimeout(15000);
+            System.out.println(c.getResponseCode());
             if (c.getResponseCode() == 200) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
                 String str;
@@ -67,12 +69,12 @@ public class GetVideoDirectLink extends HttpServlet {
             String aniId = request.getParameter("aniid");
             String epNum = request.getParameter("epnum");
             String srcId = request.getParameter("srcid");
-//            System.out.println(epNum + " - " + srcId + " - " + aniId);
+            System.out.println(epNum + " - " + srcId + " - " + aniId);
             EpisodeDAO eDAO = new EpisodeDAO();
             Episode e = new Episode();
             e.setAniId(Integer.parseInt(aniId));
             e.setEpNumber(Integer.parseInt(epNum));
-            e.setSourceId(Integer.parseInt(srcId));
+            e.setSource(new Source(Integer.parseInt(srcId), ""));
             Episode resultEp = eDAO.get(e);
             if (resultEp != null) {
                 String url = "https://api.123share.top/getlink/?link=" + resultEp.getUrl();

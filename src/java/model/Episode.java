@@ -13,8 +13,7 @@ public class Episode {
     private int epId;
     private int aniId;
     private int epNumber;
-    private int sourceId;
-    private String sourceName;
+    private Source source;
     private String url;
     public Episode() {
     }
@@ -35,12 +34,12 @@ public class Episode {
         this.url = url;
     }
 
-    public String getSourceName() {
-        return sourceName;
+    public Source getSource() {
+        return source;
     }
 
-    public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
+    public void setSource(Source source) {
+        this.source = source;
     }
 
     public Episode(int aniId) {
@@ -63,13 +62,6 @@ public class Episode {
         this.epNumber = epNumber;
     }
 
-    public int getSourceId() {
-        return sourceId;
-    }
-
-    public void setSourceId(int sourceId) {
-        this.sourceId = sourceId;
-    }
     
     
 }

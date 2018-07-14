@@ -1,3 +1,4 @@
+<%@page import="model.Source"%>
 <%@page import="model.Account"%>
 <%@page import="model.Anime"%>
 <%@page import="model.Episode"%>
@@ -23,8 +24,8 @@
             }
             Account account = (Account) session.getAttribute("account");
             Anime a = (Anime) request.getAttribute("anime");
-            Map<String, ArrayList<Episode>> allEpBySrc
-                    = (Map<String, ArrayList<Episode>>) request.getAttribute("list_ep_by_src");
+            Map<Source, ArrayList<Episode>> allEpBySrc
+                    = (Map<Source, ArrayList<Episode>>) request.getAttribute("list_ep_by_src");
         %>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title><%= a.getAniName()%> - xem phim</title>
@@ -100,6 +101,18 @@
                     padding:0;
                     border:1px solid springgreen;
                     border-radius: 20px !important
+                }
+                .vjs-custom-waiting .vjs-loading-spinner
+                {
+                    z-index: 9999;
+                    display: block;
+                }
+                .video-js.vjs-custom-waiting .vjs-loading-spinner:before,
+                .video-js.vjs-custom-waiting .vjs-loading-spinner:after
+                {
+                    /* I just copied the same animation as in the default css file */
+                    -webkit-animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite;
+                    animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite;
                 }
             </style>
         </head>
@@ -214,7 +227,7 @@
                                 <i class="fa fa-lightbulb-o"></i>
                                 <span>Tắt đèn</span>
                             </a>
-                            <a class="list-group-item text-center">
+                            <a id="bookmark-btn" class="list-group-item text-center" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="">
                                 <i class="fa fa-star-o"></i>
                                 <span>Theo dõi</span>
                             </a>
@@ -229,7 +242,7 @@
                             <div class="row">
                                 <div class="col-sm-10 col-md-offset-1">
                                     <p>Web không hỗ trợ trình duyệt IE 8</p>
-                                    <p>Nếu xem anime gặp lỗi gì vui lòng sử dụng chức năng <a href="#" style="color: #33cc00">Báo lỗi</a> ở bên trên để báo lại lỗi mà bạn gặp nhé ^^!.</p>
+                                    <p>Nếu xem anime gặp lỗi 404 vui lòng sử dụng chức năng <span style="color: #33cc00">Báo lỗi</span> ở bên trên để báo lại lỗi mà bạn gặp nhé ^^!.</p>
                                 </div>
                             </div>
                         </div>
@@ -237,14 +250,14 @@
                 </div>
                 <!--list ep chooser-->
                 <div class="row">
-                    <% for (Map.Entry<String, ArrayList<Episode>> ep : allEpBySrc.entrySet()) {
-                            String key = ep.getKey();
+                    <% for (Map.Entry<Source, ArrayList<Episode>> ep : allEpBySrc.entrySet()) {
+                            Source key = ep.getKey();
                             ArrayList<Episode> eps = ep.getValue();
 
                     %>
                     <!--title-->
                     <div class="col-sm-10 col-md-offset-1">
-                        <h5 class="sever-title">Server <%= key%></h5>
+                        <h5 class="sever-title">Server <%= key.getSourceName()%></h5>
                         <!--ep list-->
                         <div class="row ep-list-wrap ">
                             <% for (Episode e : eps) {
@@ -253,7 +266,7 @@
                             <script>
                                 preload.push({
                                     epNum: <%= e.getEpNumber()%>,
-                                    srcId: <%= e.getSourceId()%>,
+                                    srcId: <%= e.getSource().getSourceId()%>,
                                     aniId: <%= e.getAniId()%>
                                 });
                             </script>
@@ -262,12 +275,12 @@
                                 // add full playlist
                                 list_ep.push({
                                     epNum: <%= e.getEpNumber()%>,
-                                    srcId: <%= e.getSourceId()%>,
+                                    srcId: <%= e.getSource().getSourceId()%>,
                                     aniId: <%= e.getAniId()%>
                                 });
                             </script>
                             <a href="#player" class="ep-btn"  onclick="setTimeout(function () {
-                                        changeEp(<%= e.getEpNumber()%>,<%= e.getSourceId()%>, <%= e.getAniId()%>);
+                                        changeEp(<%= e.getEpNumber()%>,<%= e.getSource().getSourceId()%>, <%= e.getAniId()%>);
                                     }, 800)"><%= e.getEpNumber()%></a>
                             <%}%>
                         </div>
@@ -287,6 +300,7 @@
         </div>
         <script>
             $(document).ready(function () {
+                subscribeCheck(<%= a.getAniId()%>);
         <% if (account != null) { %>
                 $('#report-btn').popover({content: 'Nhấn vào đây để báo lỗi', animation: true});
                 $("#report-btn").click(function () {
@@ -323,10 +337,11 @@
                 var count = 0;  //dùng đếm số lượng src đã get direct link
                 var notFound404;    //vòng lặp để check 404
                 var needLoadLeng = 0;
+                console.log(currentSrc);
                 if (<%=request.getParameter("epsrc")%> == null && currentSrc == null) { //preload xem server nào ngon nhất ->load trong tat ca cac sourceID
                     for (var i in preload) {
                         needLoadLeng = preload.length;
-                        console.log(i);
+                        console.log("load multi source");
                         if (loaded == false) {
                             preloadSrc(false, preload[i].epNum, preload[i].srcId, preload[i].aniId);
                         }
@@ -334,6 +349,7 @@
                 } else {
                     for (var i in preload) {
                         if (preload[i].srcId == currentSrc) {  //preload xem server nào ngon nhất ->load trong tat ca cac sourceID//bo loaded == false vi chi load den 1 link
+                            console.log("load single source");
                             needLoadLeng++;
                             preloadSrc(true, preload[i].epNum, preload[i].srcId, preload[i].aniId);
                         }
@@ -461,7 +477,8 @@
                                 return;
                             } else {
                                 var json = JSON.parse(response.replace('\/', '/'));
-                                if (json.sources == null) {
+
+                                if (json.sources == null || json.sources.length == 0) {
                                     count++;
                                     //truong hop chi 1 minh chi dinh
 //                                    if (hasSrcTarget == true) {

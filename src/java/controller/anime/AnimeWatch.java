@@ -54,16 +54,16 @@ public class AnimeWatch extends HttpServlet {
         }
         
         ArrayList<Episode> allEpByAniID = epDAO.getAllByAniID(new Episode(Integer.parseInt(aniId)));
-        Map<String, ArrayList<Episode>> allEpBySrc = new LinkedHashMap<>();
+        Map<Source, ArrayList<Episode>> allEpBySrc = new LinkedHashMap<>();
         allEpByAniID.forEach((ep) -> {
             ArrayList<Episode> _eps;
-            if (!allEpBySrc.containsKey(ep.getSourceName())) {
+            if (!allEpBySrc.containsKey(ep.getSource())) {
                 _eps = new ArrayList<>();
             } else {
-                _eps = allEpBySrc.get(ep.getSourceName());
+                _eps = allEpBySrc.get(ep.getSource());
             }
             _eps.add(ep);
-            allEpBySrc.put(ep.getSourceName(), _eps);
+            allEpBySrc.put(ep.getSource(), _eps);
         });
         request.setAttribute("list_ep_by_src", allEpBySrc);
         request.getRequestDispatcher("../view/anime/watch.jsp").forward(request, response);

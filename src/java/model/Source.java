@@ -5,11 +5,14 @@
  */
 package model;
 
+import java.util.Objects;
+
 /**
  *
  * @author DrAgOn
  */
 public class Source {
+
     private int sourceId;
     private String sourceName;
 
@@ -36,5 +39,27 @@ public class Source {
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
     }
-    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof Source)) {
+            return false;
+        }
+        Source _obj = (Source) obj;
+        return _obj.getSourceId() == this.sourceId && _obj.getSourceName().equalsIgnoreCase(this.sourceName);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + this.sourceId;
+        hash = 29 * hash + Objects.hashCode(this.sourceName);
+        return hash;
+    }
 }

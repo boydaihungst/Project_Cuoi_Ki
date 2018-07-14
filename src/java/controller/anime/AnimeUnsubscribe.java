@@ -19,52 +19,54 @@ import model.Favorite;
  *
  * @author DrAgOn
  */
-public class AnimeSubscribe extends HttpServlet {
+public class AnimeUnsubscribe extends HttpServlet {
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         FavoriteDAO fDAO = new FavoriteDAO();
         try {
             Account a = (Account) request.getSession(true).getAttribute("account");
-            if (a == null) {
-                response.getWriter().print("404");
-                return;
-            }
             int aniId = Integer.parseInt(request.getParameter("aniid"));
             int accId = a.getAccid();
-            System.out.println(aniId + "-" + accId + "-" + fDAO.get(new Favorite(accId, aniId, null)));
-            if (fDAO.get(new Favorite(accId, aniId, null)) != null) {
-                response.getWriter().print(true);
-                return;
-            } else {
-                response.getWriter().print(false);
-                return;
-            }
-        } catch (Exception e) {
-            response.getWriter().print(false);
-            return;
-        }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try {
-            Account a = (Account) request.getSession(true).getAttribute("account");
-            int aniId = Integer.parseInt(request.getParameter("aniid"));
-            int accId = a.getAccid();
-            FavoriteDAO fDAO = new FavoriteDAO();
-            if (fDAO.insert(new Favorite(accId, aniId, null)) > 0) {
+            if (fDAO.delete(new Favorite(accId, aniId, null)) != 0) {
+                System.out.println("unsub-"+ aniId);
                 response.getWriter().print(true);
                 return;
             }
         } catch (NumberFormatException e) {
-//            e.printStackTrace();
+            e.printStackTrace();
         }
         response.getWriter().print(false);
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
     }
 
     /**

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Episode;
+import model.Source;
 
 /**
  *
@@ -34,7 +35,7 @@ public class EpisodeDAO extends BaseDAO<Episode> {
                     + "  ORDER BY e.SourceName, [EpNumber] ";
             CallableStatement statement = connection.prepareCall(query);
             statement.setInt(1, model.getAniId());
-            statement.setInt(2, model.getSourceId());
+            statement.setInt(2, model.getSource().getSourceId());
             statement.setInt(3, model.getEpNumber());
 
             ResultSet rs = statement.executeQuery();
@@ -43,8 +44,10 @@ public class EpisodeDAO extends BaseDAO<Episode> {
                 e.setEpId(rs.getInt("EpID"));
                 e.setAniId(rs.getInt("AniID"));
                 e.setEpNumber(rs.getInt("EpNumber"));
-                e.setSourceId(rs.getInt("SourceID"));
-                e.setSourceName(rs.getString("SourceName"));
+                Source s = new Source();
+                s.setSourceId(rs.getInt("SourceID"));
+                s.setSourceName(rs.getString("SourceName"));
+                e.setSource(s);
                 e.setUrl(rs.getString("Url"));
             }
         } catch (SQLException ex) {
@@ -73,8 +76,10 @@ public class EpisodeDAO extends BaseDAO<Episode> {
                 e.setEpId(rs.getInt("EpID"));
                 e.setAniId(rs.getInt("AniID"));
                 e.setEpNumber(rs.getInt("EpNumber"));
-                e.setSourceId(rs.getInt("SourceID"));
-                e.setSourceName(rs.getString("SourceName"));
+                Source s = new Source();
+                s.setSourceId(rs.getInt("SourceID"));
+                s.setSourceName(rs.getString("SourceName"));
+                e.setSource(s);
                 e.setUrl(rs.getString("Url"));
                 epis.add(e);
             }

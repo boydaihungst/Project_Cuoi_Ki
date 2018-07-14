@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Episode;
 import model.ErrorReport;
+import model.Source;
 
 /**
  *
@@ -36,7 +37,7 @@ public class AnimeErrReport extends HttpServlet {
             Episode e = new Episode();
             e.setAniId(Integer.parseInt(aniId));
             e.setEpNumber(Integer.parseInt(epNum));
-            e.setSourceId(Integer.parseInt(srcId));
+            e.setSource(new Source(Integer.parseInt(srcId),""));
             Episode resultEp = eDAO.get(e);
 
             if (resultEp != null) {
@@ -47,7 +48,6 @@ public class AnimeErrReport extends HttpServlet {
                 response.getWriter().print(true);
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
         }
         response.getWriter().print(false);
     }

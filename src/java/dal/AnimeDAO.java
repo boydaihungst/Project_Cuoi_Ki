@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Account;
 import model.Anime;
 import model.Gender;
 import model.Type;
@@ -831,7 +832,7 @@ public class AnimeDAO extends BaseDAO<Anime> {
             }
             PreparedStatement statement = connection.prepareStatement(query);
             for (Map.Entry<Integer, Object[]> entry : params.entrySet()) {
-                
+
                 Integer key = entry.getKey();
                 Object[] value = entry.getValue();
                 if (value[1].toString().equals("int")) {
@@ -946,7 +947,7 @@ public class AnimeDAO extends BaseDAO<Anime> {
                         + "   having\n"
                         + "      count(*) = " + numGenderValid + ") tblB ON tblB.AniID = a.AniID\n";
             }
-            query+=") as tblFinal";
+            query += ") as tblFinal";
             PreparedStatement statement = connection.prepareStatement(query);
             for (Map.Entry<Integer, Object[]> entry : params.entrySet()) {
                 Integer key = entry.getKey();
@@ -961,14 +962,55 @@ public class AnimeDAO extends BaseDAO<Anime> {
                     statement.setDate(key, Date.valueOf(value[0].toString()));
                 }
             }
-             ResultSet rs = statement.executeQuery();
-             if(rs.next()){
-                 return rs.getInt("Total");
-             }
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("Total");
+            }
         } catch (SQLException e) {
 
         }
         return 0;
+    }
+
+    public ArrayList<Anime> getAllFavotireByAcc(Account model) {
+        ArrayList<Anime> animes = new ArrayList<>();
+        try {
+            String query = "SELECT a.[AniID]\n"
+                    + "      ,a.[AniName]\n"
+                    + "      ,a.[AniSeason]\n"
+                    + "      ,a.[ReleaseTime]\n"
+                    + "      ,a.[AniStatus]\n"
+                    + "      ,a.[EpsMax]\n"
+                    + "      ,a.[UpdateTime]\n"
+                    + "      ,a.[EpsReleased]\n"
+                    + "      ,a.[Desc]\n"
+                    + "      ,a.[Picture]\n"
+                    + "      ,a.[Trailer]\n"
+                    + "      ,a.[TypeID]\n"
+                    + "      ,f.[AddedDate]\n"
+                    + "  FROM [Anime] a INNER JOIN Favorite f ON a.AniID= f.AniID AND f.AccID =?\n"
+                    + "  ORDER BY f.AddedDate";
+            CallableStatement statement = connection.prepareCall(query);
+            statement.setInt(1, model.getAccid());
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Anime ani = new Anime();
+                ani.setAniId(rs.getInt("AniID"));
+                ani.setAniName(rs.getString("AniName"));
+                ani.setAniSeason(rs.getInt("AniSeason"));
+                ani.setReleaseTime(rs.getDate("ReleaseTime"));
+                ani.setAniStatus(rs.getInt("AniStatus"));
+                ani.setEpsMax(rs.getInt("EpsMax"));
+                ani.setUpdateTime(rs.getDate("UpdateTime"));
+                ani.setEpsRel(rs.getInt("EpsReleased"));
+                ani.setDesc(rs.getString("Desc"));
+                ani.setPicture(rs.getString("Picture"));
+                animes.add(ani);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(FavoriteDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return animes;
     }
 
     public int clickAutoincrement(int aniId) {

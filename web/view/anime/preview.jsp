@@ -211,14 +211,7 @@
         <script src="<%= request.getContextPath()%>/js/videojs-resolution-switcher.js"></script>
         <script>
             $(document).ready(function () {
-            <% if (account == null) { %>
-                $('#bookmark-btn').popover({content: "Để lưu bạn cần phải đăng nhập", animation: true});
-                var subscriber_popover = $('#bookmark-btn').data('bs.popover');
-            <%} else {%>
-                $('#bookmark-btn').popover({content: "", animation: true});
-                var subscriber_popover = $('#bookmark-btn').data('bs.popover');
-                subscribeCheck();
-            <%}%>
+                subscribeCheck(<%= a.getAniId() %>);
                 $('#btn-watch').click(function () {
                     window.location.href = "<%= request.getContextPath()%>/anime/watch?aniid=<%= a.getAniId()%>";
                             });
@@ -226,52 +219,7 @@
                             $(window).resize(function () {
                                 $('.info-wrap-right').css('height', ($('.info-wrap-left').css('height')));
                             });
-
-                            function subscribe() {
-                                var xhttp;
-                                xhttp = new XMLHttpRequest();
-                                xhttp.onreadystatechange = function () {
-                                    if (this.readyState === 4 && this.status === 200) {
-                                        console.log('subcribe: ' + this.responseText);
-                                        if (this.responseText === "false") {
-                                            subscriber_popover.options.content = "Bạn đã theo dõi phim rồi";
-                                            $(".popover-content").html('Bạn đã theo dõi phim rồi');
-                                        } else {
-                                            subscriber_popover.options.content = "Bạn đã theo dõi thành công";
-                                            $(".popover-content").html('Bạn đã theo dõi thành công');
-                                        }
-                                    }
-                                };
-                                xhttp.open("POST", "<%=request.getContextPath()%>/anime/subscribe", true);
-                                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                                xhttp.send("aniid=<%= a.getAniId()%>");
-                            }
-                            ;
-                            function subscribeCheck() {
-                                var xhttp;
-                                xhttp = new XMLHttpRequest();
-                                xhttp.onreadystatechange = function () {
-                                    if (this.readyState === 4 && this.status === 200) {
-                                        console.log('check subcribe: ' + this.responseText);
-                                        if (this.responseText === "true") {
-                                            subscriber_popover.options.content = "Bạn đã theo dõi phim rồi";
-                                            $(".popover-content").html('Bạn đã theo dõi phim rồi');
-                                        } else if (this.responseText === "404") {
-                                            $('#bookmark-btn').popover({content: "Để lưu bạn cần phải đăng nhập", animation: true});
-                                        } else {
-                                            $('#bookmark-btn').popover({content: "Nhấn vào đây để lưu phim", animation: true});
-                                            $('#bookmark-btn').click(function () {
-                                                subscribe();
-                                            });
-                                        }
-                                    }
-                                };
-                                xhttp.open("GET", "<%=request.getContextPath()%>/anime/subscribe?aniid=<%= a.getAniId()%>", true);
-                                            xhttp.send();
-                                        }
-                                        ;
-
-                                    });
+                        });
         </script>
         <script>
             var player = videojs('video', {

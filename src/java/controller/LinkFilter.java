@@ -6,6 +6,7 @@
 package controller;
 
 import dal.AnimeDAO;
+import dal.FavoriteDAO;
 import dal.GenderDAO;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -19,6 +20,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import model.Account;
+import model.Favorite;
 import model.Gender;
 
 /**
@@ -26,29 +29,31 @@ import model.Gender;
  * @author DrAgOn
  */
 public class LinkFilter implements Filter {
-    
+
     private static final boolean debug = true;
 
     // The filter configuration object we are associated with.  If
     // this value is null, this filter instance is not currently
     // configured. 
     private FilterConfig filterConfig = null;
-    
+
     public LinkFilter() {
     }
-    
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
-        
-        
-        
+
         GenderDAO catDAO = new GenderDAO();
         ArrayList<Gender> cats = catDAO.getAll();
         request.setAttribute("cats", cats);
-//        System.out.println(httpRequest.getServletPath());
+        Account a = (Account) httpRequest.getSession(true).getAttribute("account");
+        if (a != null) {
+            AnimeDAO aDAO = new AnimeDAO();
+            request.setAttribute("favs", aDAO.getAllFavotireByAcc(a));
+        }
         chain.doFilter(request, response);
     }
 
@@ -99,7 +104,7 @@ public class LinkFilter implements Filter {
         sb.append(")");
         return (sb.toString());
     }
-    
+
     public static String getStackTrace(Throwable t) {
         String stackTrace = null;
         try {
@@ -113,9 +118,9 @@ public class LinkFilter implements Filter {
         }
         return stackTrace;
     }
-    
+
     public void log(String msg) {
         filterConfig.getServletContext().log(msg);
     }
-    
+
 }

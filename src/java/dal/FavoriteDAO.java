@@ -46,6 +46,8 @@ public class FavoriteDAO extends BaseDAO<Favorite> {
         return f;
     }
 
+    
+
     @Override
     public ArrayList<Favorite> getAll() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
