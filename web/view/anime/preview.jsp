@@ -136,7 +136,12 @@
                             <% for (String src : a.getWallpager()) {%>
                             <div class="item"><img class="img-responsive lazyload" data-src="<%= request.getContextPath()%>/<%= src%>" alt=""></div>
                                 <% }
-                                %>               
+                                %>   
+                                <% if (a.getWallpager().size() <= 0) {%>
+                            <div class="item"><img class="img-responsive lazyload" data-src="<%= request.getContextPath()%>/img/anime-img/wallpaper/default/wp1.jpg" alt=""></div>
+                            <div class="item"><img class="img-responsive lazyload" data-src="<%= request.getContextPath()%>/img/anime-img/wallpaper/default/wp2.jpg" alt=""></div>    
+                            <div class="item"><img class="img-responsive lazyload" data-src="<%= request.getContextPath()%>/img/anime-img/wallpaper/default/wp3.png" alt=""></div>
+                            <%}%>
                         </div>
                     </div>
                 </div>
@@ -211,7 +216,7 @@
         <script src="<%= request.getContextPath()%>/js/videojs-resolution-switcher.js"></script>
         <script>
             $(document).ready(function () {
-                subscribeCheck(<%= a.getAniId() %>,'<%= a.getAniName() %>');
+                subscribeCheck(<%= a.getAniId()%>, '<%= a.getAniName()%>');
                 $('#btn-watch').click(function () {
                     window.location.href = "<%= request.getContextPath()%>/anime/watch?aniid=<%= a.getAniId()%>";
                             });

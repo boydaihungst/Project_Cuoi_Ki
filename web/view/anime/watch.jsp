@@ -381,7 +381,7 @@
                     }
                     //play error video kho lỗi 404 -> mình tự thêm mã 404
                     if (player.readyState() == 0 && player.error().code === 404) {
-                        player.updateSrc([{src: "<%= request.getContextPath()%>/img/error-video.mp4",
+                       player.updateSrc([{src: "<%= request.getContextPath()%>/img/error-video.mp4",
                                 type: "video/mp4",
                                 label: ""}]);
                         player.play();
@@ -510,7 +510,7 @@
                                 }
                                 console.log("source added: OK");
                                 console.log(directLink);
-                                console.log('source loaded: ep_'+epNum + ' src_' + srcId);
+                                console.log('source loaded: ep_' + epNum + ' src_' + srcId);
                                 player.updateSrc(result); // update lại src  cho video
                                 var currentepele = $('#ep_' + epNum + '_src_' + srcId); //to màu label tập đang xem
                                 if (!currentepele.hasClass("chose-ep-color")) {

@@ -786,7 +786,7 @@ public class AnimeDAO extends BaseDAO<Anime> {
                 objects[1] = "int";
                 params.put(paramIndex, objects);
             }
-            if (modal.getAniStatus() > 0) {
+            if (modal.getAniStatus() >= 0) {
                 paramIndex++;
                 query += " AND a.AniStatus =? \n";
                 Object[] objects = new Object[2];

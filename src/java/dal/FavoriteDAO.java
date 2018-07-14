@@ -88,7 +88,6 @@ public class FavoriteDAO extends BaseDAO<Favorite> {
             return statement.executeUpdate();
 
         } catch (SQLException ex) {
-            Logger.getLogger(FavoriteDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0;
     }
