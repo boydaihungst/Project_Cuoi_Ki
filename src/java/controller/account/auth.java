@@ -45,18 +45,6 @@ public class auth extends HttpServlet {
         HttpSession session = request.getSession(true);
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        EnDeCryptor temp = new EnDeCryptor();
-        byte[] encrypted;
-        try {
-            encrypted = temp.encrypt(password, username);
-            String decrypted = temp.decrypt(encrypted, username);
-            System.out.println(encrypted);
-            System.out.println(decrypted);
-        } catch (Exception ex) {
-            Logger.getLogger(auth.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-
         AccountDAO aDAO = new AccountDAO();
         Account a;
         if ((a = aDAO.get(new Account(username, password, ""))) != null) {

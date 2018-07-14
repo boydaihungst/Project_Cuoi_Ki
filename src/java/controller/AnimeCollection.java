@@ -68,8 +68,7 @@ public class AnimeCollection extends HttpServlet {
                 request.setAttribute("title", "ANIME MÙA " + TimeUtils.seasonEngtoVn(TimeUtils.getSeasonYearByDate(Date.valueOf(TimeUtils.convertSeasonYearToStartDate(_time[0], Integer.parseInt(_time[1]))))));
                 request.setAttribute("animes", anime_by_season);
             } catch (Exception e) {
-                e.printStackTrace();
-                response.sendRedirect("homepage");
+             request.getRequestDispatcher("view/NotFound404.jsp").forward(request, response);
                 return;
             }
         }

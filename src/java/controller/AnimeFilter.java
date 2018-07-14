@@ -94,7 +94,6 @@ public class AnimeFilter extends HttpServlet {
             request.getRequestDispatcher("view/anime/filter.jsp").forward(request, response);
             return;
         } catch (NumberFormatException e) {
-            e.printStackTrace();
         }
         response.sendRedirect("homepage");
     }

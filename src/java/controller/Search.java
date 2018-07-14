@@ -39,7 +39,6 @@ public class Search extends HttpServlet {
         Gson gson = new Gson();
         AnimeDAO aniDAO = new AnimeDAO();
         Anime a = new Anime();
-        
         a.setAniName(aniName);
         ArrayList<Anime> animes = aniDAO.searchByName(a);
         response.getWriter().write(gson.toJson(animes));

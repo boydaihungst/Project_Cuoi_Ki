@@ -35,7 +35,6 @@ public class AnimeUnsubscribe extends HttpServlet {
                 return;
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
         }
         response.getWriter().print(false);
     }

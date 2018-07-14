@@ -211,7 +211,7 @@
         <script src="<%= request.getContextPath()%>/js/videojs-resolution-switcher.js"></script>
         <script>
             $(document).ready(function () {
-                subscribeCheck(<%= a.getAniId() %>);
+                subscribeCheck(<%= a.getAniId() %>,'<%= a.getAniName() %>');
                 $('#btn-watch').click(function () {
                     window.location.href = "<%= request.getContextPath()%>/anime/watch?aniid=<%= a.getAniId()%>";
                             });

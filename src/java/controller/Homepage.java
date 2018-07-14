@@ -42,7 +42,6 @@ public class Homepage extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         AnimeDAO aniDAO = new AnimeDAO();
-        GenderDAO catDAO = new GenderDAO();
         TimeUtils timeUtils = new TimeUtils();
 
 //        String currentDate = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());

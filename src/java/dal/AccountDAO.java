@@ -19,7 +19,7 @@ import model.Account;
  * @author DrAgOn
  */
 public class AccountDAO extends BaseDAO<Account> {
-
+    private String privateKey = "3A98F14AECC125E2A87B25FAF46E8"; //random :D
     @Override
     public Account get(Account model) {
         Account acc = null;
@@ -30,10 +30,12 @@ public class AccountDAO extends BaseDAO<Account> {
                     + "      ,[Email]\n"
                     + "      ,[AccID]\n"
                     + "  FROM [Account]\n"
-                    + "  WHERE [Username] =? AND [Password]=? ";
+                    + "  WHERE [Username] =? AND (select convert(varchar(100),DecryptByPassPhrase(?,(SELECT [Password] FROM Account WHERE Username =?)))) = ? ";
             PreparedStatement statement = connection.prepareCall(query);
             statement.setString(1, model.getUsername());
-            statement.setString(2, model.getPassword());
+            statement.setString(2, privateKey);
+            statement.setString(3, model.getUsername());
+            statement.setString(4, model.getPassword());
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
                 acc = new Account();
@@ -116,11 +118,12 @@ public class AccountDAO extends BaseDAO<Account> {
                     + "           ,[Password]\n"
                     + "           ,[Email])\n"
                     + "     VALUES\n"
-                    + "           (?,?,?)";
+                    + "           (?,(select EncryptedData = EncryptByPassPhrase(?,?)),?)";
             CallableStatement statement = connection.prepareCall(query);
             statement.setString(1, model.getUsername());
-            statement.setString(2, model.getPassword());
-            statement.setString(3, model.getEmail());
+            statement.setString(2, privateKey);
+            statement.setString(3, model.getPassword());
+            statement.setString(4, model.getEmail());
             return statement.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);

@@ -114,6 +114,9 @@
                     -webkit-animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite;
                     animation: vjs-spinner-spin 1.1s cubic-bezier(0.6, 0.2, 0, 0.8) infinite, vjs-spinner-fade 1.1s linear infinite;
                 }
+                .chose-ep-color{
+                    background-color: darkgreen;
+                }
             </style>
         </head>
         <body>
@@ -180,6 +183,7 @@
                             }
                         }
                     }
+                    console.log("last play: ep_" + currentEpNum + ' src_' + currentSrc);
                 }
                 //change ep 
                 //epNum (int): số tập
@@ -260,17 +264,7 @@
                         <h5 class="sever-title">Server <%= key.getSourceName()%></h5>
                         <!--ep list-->
                         <div class="row ep-list-wrap ">
-                            <% for (Episode e : eps) {
-                                    //thêm field cho preload 
-                                    if (e.getEpNumber() == epNum) {%>
-                            <script>
-                                preload.push({
-                                    epNum: <%= e.getEpNumber()%>,
-                                    srcId: <%= e.getSource().getSourceId()%>,
-                                    aniId: <%= e.getAniId()%>
-                                });
-                            </script>
-                            <% }%>
+                            <% for (Episode e : eps) {%>
                             <script>
                                 // add full playlist
                                 list_ep.push({
@@ -279,10 +273,21 @@
                                     aniId: <%= e.getAniId()%>
                                 });
                             </script>
-                            <a href="#player" class="ep-btn"  onclick="setTimeout(function () {
+                            <a href="#player" id="ep_<%= e.getEpNumber()%>_src_<%= e.getSource().getSourceId()%>" class="ep-btn"  onclick="setTimeout(function () {
                                         changeEp(<%= e.getEpNumber()%>,<%= e.getSource().getSourceId()%>, <%= e.getAniId()%>);
                                     }, 800)"><%= e.getEpNumber()%></a>
                             <%}%>
+                            <script>
+                                for (var i in  list_ep) {
+                                    if (list_ep[i].epNum == currentEpNum) {
+                                        preload.push({
+                                            epNum: list_ep[i].epNum,
+                                            srcId: list_ep[i].srcId,
+                                            aniId: list_ep[i].aniId
+                                        });
+                                    }
+                                }
+                            </script>
                         </div>
                     </div>
                     <%}%>
@@ -300,7 +305,7 @@
         </div>
         <script>
             $(document).ready(function () {
-                subscribeCheck(<%= a.getAniId()%>);
+                subscribeCheck(<%= a.getAniId()%>, '<%= a.getAniName()%>');
         <% if (account != null) { %>
                 $('#report-btn').popover({content: 'Nhấn vào đây để báo lỗi', animation: true});
                 $("#report-btn").click(function () {
@@ -334,10 +339,17 @@
                     }
                 });
                 var ct; //int current time của video player khi bị dính error
-                var count = 0;  //dùng đếm số lượng src đã get direct link
-                var notFound404;    //vòng lặp để check 404
+                var count = 0; //dùng đếm số lượng src đã get direct link
+                var notFound404; //vòng lặp để check 404
                 var needLoadLeng = 0;
-                console.log(currentSrc);
+//                console.log(currentSrc);
+                //tô màu tập đang xem
+                if (currentEpNum != null && currentSrc != null) {
+                    var currentepele = $('#ep_' + currentEpNum + '_src_' + currentSrc);
+                    if (!currentepele.hasClass("chose-ep-color")) {
+                        currentepele.addClass("chose-ep-color");
+                    }
+                }
                 if (<%=request.getParameter("epsrc")%> == null && currentSrc == null) { //preload xem server nào ngon nhất ->load trong tat ca cac sourceID
                     for (var i in preload) {
                         needLoadLeng = preload.length;
@@ -373,7 +385,6 @@
                                 type: "video/mp4",
                                 label: ""}]);
                         player.play();
-
                     } else {    //khi lỗi decode thì sẽ load lại src và cho play lại + pass 1 giây để tránh lỗi
                         player.error(null);
                         ct = player.currentTime();
@@ -408,7 +419,6 @@
                     window.location.reload();
                 }
                 ;
-
                 function prev() {
                     var isThere = list_ep.some(function (obj) {
                         return obj.epNum == currentEpNum - 1 && obj.srcId == currentSrc && obj.aniId == currentAniId;
@@ -470,20 +480,11 @@
                                 return;
                             if (response == 'false') {
                                 count++;
-                                //truong hop chi 1 minh chi dinh
-//                                if (hasSrcTarget == true) {
-//                                    player.error({code: 404}); //trigger video bao loi
-//                                }
                                 return;
                             } else {
                                 var json = JSON.parse(response.replace('\/', '/'));
-
                                 if (json.sources == null || json.sources.length == 0) {
                                     count++;
-                                    //truong hop chi 1 minh chi dinh
-//                                    if (hasSrcTarget == true) {
-//                                        player.error({code: 404}); //trigger video bao loi
-//                                    }
                                     return;
                                 }
                                 for (var i in json.sources) {
@@ -509,7 +510,13 @@
                                 }
                                 console.log("source added: OK");
                                 console.log(directLink);
-                                player.updateSrc(result);
+                                console.log('source loaded: ep_'+epNum + ' src_' + srcId);
+                                player.updateSrc(result); // update lại src  cho video
+                                var currentepele = $('#ep_' + epNum + '_src_' + srcId); //to màu label tập đang xem
+                                if (!currentepele.hasClass("chose-ep-color")) {
+                                    currentepele.addClass("chose-ep-color");
+                                }
+                                //update lại tập hiện tại
                                 currentEpNum = epNum;
                                 currentSrc = srcId;
                                 loaded = true;
@@ -519,7 +526,6 @@
                 }
                 ;
             });
-
     </script>
 </body>
 </html>

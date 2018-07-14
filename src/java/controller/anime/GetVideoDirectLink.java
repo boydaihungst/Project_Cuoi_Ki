@@ -44,8 +44,8 @@ public class GetVideoDirectLink extends HttpServlet {
             c.addRequestProperty("User-Agent", "Mozilla/5.0");
             c.setRequestMethod("GET");
             c.setConnectTimeout(15000);
-            System.out.println(c.getResponseCode());
             if (c.getResponseCode() == 200) {
+                System.out.println("get directlink ok: " + c.getResponseCode());
                 BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
                 String str;
                 while ((str = in.readLine()) != null) {
@@ -57,7 +57,6 @@ public class GetVideoDirectLink extends HttpServlet {
                 return "{'sources':[]}";
             }
         } catch (SocketTimeoutException e) {
-            e.printStackTrace();
             return "{'sources':[]}";
         }
     }
@@ -69,7 +68,6 @@ public class GetVideoDirectLink extends HttpServlet {
             String aniId = request.getParameter("aniid");
             String epNum = request.getParameter("epnum");
             String srcId = request.getParameter("srcid");
-            System.out.println(epNum + " - " + srcId + " - " + aniId);
             EpisodeDAO eDAO = new EpisodeDAO();
             Episode e = new Episode();
             e.setAniId(Integer.parseInt(aniId));
@@ -78,12 +76,11 @@ public class GetVideoDirectLink extends HttpServlet {
             Episode resultEp = eDAO.get(e);
             if (resultEp != null) {
                 String url = "https://api.123share.top/getlink/?link=" + resultEp.getUrl();
-                response.getWriter().print(getDataFromAPI(url,false));
+                response.getWriter().print(getDataFromAPI(url, false));
             } else {
                 response.getWriter().print(false);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             response.getWriter().print(false);
         }
     }

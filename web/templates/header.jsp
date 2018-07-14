@@ -15,6 +15,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <%
+            Anime a = (Anime) request.getAttribute("anime");
             ArrayList<Anime> favs = (ArrayList<Anime>) request.getAttribute("favs");
             if (favs == null) {
                 favs = new ArrayList<Anime>();
@@ -463,9 +464,9 @@
                         </a>
                         <ul class="dropdown-menu favorite-dropdown-menu">
                             <% for (Anime f : favs) {%>
-                            <li class="alert fade in" role="presentation" >
+                            <li id="bookmark-list-<%= f.getAniId()%>" class="alert fade in" role="presentation" >
                                 <a href="<%= request.getContextPath()%>/anime/view?aniid=<%= f.getAniId()%>"><span><%=  f.getAniName()%></span></a>
-                                <a href="" class="close-btn" data-dismiss="alert" onclick="unsubscribe(<%= f.getAniId()%>);return false;">&times;</a>
+                                <a href="" class="close-btn" data-dismiss="alert" onclick="unsubscribe(<%= f.getAniId()%>, '<%= f.getAniName()%>');return false;">&times;</a>
                             </li>
                             <%}
                             %>
@@ -550,7 +551,14 @@
         </div>
 
         <script>
-             var subscriber_popover;
+            var subscriber_popover;
+            var currentAniId;
+            var currentAniName;
+            <%if (a != null) {
+            %>
+            currentAniId =<%= a.getAniId()%>
+            currentAniName ='<%= a.getAniName()%>'
+            <%}%>
             $(document).ready(function () {
                 $('.notification').affix({
                     offset: {
@@ -616,7 +624,7 @@
                 });
                 $('#bookmark-btn').popover({content: "", animation: true});
                 subscriber_popover = $('#bookmark-btn').data('bs.popover');
-                
+
             });
             //main funtion
             function show_login_box() {
@@ -774,7 +782,7 @@
             }
             ;
 
-            function subscribe(aniid) {
+            function subscribe(aniid, aniname) {
                 var xhttp;
                 xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
@@ -786,6 +794,12 @@
                         } else {
                             subscriber_popover.options.content = "Bạn đã theo dõi thành công";
                             $(".popover-content").html('Bạn đã theo dõi thành công');
+                            if (!$('#bookmark-list-' + aniid).length) {
+                                $('.favorite-dropdown-menu').prepend('<li id="bookmark-list-' + aniid + '" class="alert fade in" role="presentation" >' +
+                                        '<a href="<%= request.getContextPath()%>/anime/view?aniid=' + aniid + '"><span>' + aniname + '</span></a>' +
+                                        '<a href="" class="close-btn" data-dismiss="alert" onclick="unsubscribe(' + aniid + ');return false;">&times;</a>' +
+                                        '</li>');
+                            }
                         }
                     }
                 };
@@ -794,7 +808,7 @@
                 xhttp.send("aniid=" + aniid);
             }
             ;
-            function subscribeCheck(aniid) {
+            function subscribeCheck(aniid, aniname) {
                 var xhttp;
                 xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
@@ -810,7 +824,7 @@
                             subscriber_popover.options.content = "Nhấn vào đây để lưu phim";
                             $(".popover-content").html('Nhấn vào đây để lưu phim');
                             $('#bookmark-btn').click(function () {
-                                subscribe(aniid);
+                                subscribe(aniid, aniname);
                             });
                         }
                     }
@@ -832,9 +846,16 @@
                             if (timeout)
                                 clearTimeout(timeout);  //clear time out de k bi conflict khi bam lien tuc ~~
                             noti.text('Đã xóa thành công');
-                            noti.css({'opacity': '1',"visibility":"visible"});
+                            noti.css({'opacity': '1', "visibility": "visible"});
+                            if (currentAniId != null && currentAniName != null) {
+                                subscriber_popover.options.content = "Nhấn vào đây để lưu phim";
+                                $(".popover-content").html('Nhấn vào đây để lưu phim');
+                                $('#bookmark-btn').click(function () {
+                                    subscribe(currentAniId, currentAniName);
+                                });
+                            }
                             timeout = setTimeout(function () {
-                                noti.css({'opacity': '0',"visibility":"hidden"});
+                                noti.css({'opacity': '0', "visibility": "hidden"});
                             }, 1000);
                         }
                     }
