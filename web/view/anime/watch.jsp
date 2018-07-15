@@ -351,8 +351,8 @@
                     }
                 }
                 if (<%=request.getParameter("epsrc")%> == null && currentSrc == null) { //preload xem server nào ngon nhất ->load trong tat ca cac sourceID
+                    needLoadLeng = preload.length;
                     for (var i in preload) {
-                        needLoadLeng = preload.length;
                         console.log("load multi source");
                         if (loaded == false) {
                             preloadSrc(false, preload[i].epNum, preload[i].srcId, preload[i].aniId);
@@ -381,7 +381,7 @@
                     }
                     //play error video kho lỗi 404 -> mình tự thêm mã 404
                     if (player.readyState() == 0 && player.error().code === 404) {
-                       player.updateSrc([{src: "<%= request.getContextPath()%>/img/error-video.mp4",
+                        player.updateSrc([{src: "<%= request.getContextPath()%>/img/error-video.mp4",
                                 type: "video/mp4",
                                 label: ""}]);
                         player.play();
