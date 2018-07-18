@@ -59,6 +59,16 @@
     <servlet>
         <servlet-name>GetVideoDirectLink</servlet-name>
         <servlet-class>controller.anime.GetVideoDirectLink</servlet-class>
+        <init-param>
+            <description>Host for proxy cua truong :) </description>
+            <param-name>proxyHost</param-name>
+            <param-value>proxy</param-value>
+        </init-param>
+        <init-param>
+            <description>Port cho proxy cua truong :&lt;</description>
+            <param-name>proxyPort</param-name>
+            <param-value>8080</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>AnimeCollection</servlet-name>

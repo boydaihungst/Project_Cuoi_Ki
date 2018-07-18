@@ -33,14 +33,13 @@ import model.Source;
  */
 public class GetVideoDirectLink extends HttpServlet {
 
-    public static String getDataFromAPI(String link, boolean isNeedProxy) throws Exception {
+    public static String getDataFromAPI(String link, String proxyHost, int port) throws Exception {
         try {
             URL url = new URL(link);
             String response = "";
-            String _proxy = "proxy";
             HttpURLConnection c;
-            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(_proxy, 8080));
-            c = isNeedProxy ? ((HttpURLConnection) url.openConnection(proxy)) : ((HttpURLConnection) url.openConnection());
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, port));
+            c = !proxyHost.trim().isEmpty() ? ((HttpURLConnection) url.openConnection(proxy)) : ((HttpURLConnection) url.openConnection());
             c.addRequestProperty("User-Agent", "Mozilla/5.0");
             c.setRequestMethod("GET");
             c.setConnectTimeout(15000);
@@ -68,6 +67,9 @@ public class GetVideoDirectLink extends HttpServlet {
             String aniId = request.getParameter("aniid");
             String epNum = request.getParameter("epnum");
             String srcId = request.getParameter("srcid");
+            String proxyHost = request.getServletContext().getInitParameter("proxyHost");
+            String proxyPort = request.getServletContext().getInitParameter("proxyPort");
+
             EpisodeDAO eDAO = new EpisodeDAO();
             Episode e = new Episode();
             e.setAniId(Integer.parseInt(aniId));
@@ -76,7 +78,7 @@ public class GetVideoDirectLink extends HttpServlet {
             Episode resultEp = eDAO.get(e);
             if (resultEp != null) {
                 String url = "https://api.123share.top/getlink/?link=" + resultEp.getUrl();
-                response.getWriter().print(getDataFromAPI(url, false));
+                response.getWriter().print(getDataFromAPI(url, proxyHost, Integer.parseInt(proxyPort)));
             } else {
                 response.getWriter().print(false);
             }
